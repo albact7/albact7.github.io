@@ -1,77 +1,541 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="author" content="Alba Cotarelo" />
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Space Jam</title>
+    <title>Alba Cotarelo</title>
+    <meta content="" name="descriptison">
+    <meta content="" name="keywords">
+    <meta name="google-site-verification" content="DixmNaRpNdkvaBQ7zOzHqHtlALPOn5mzdGx1vf6jES0" />
 
-    <link rel="stylesheet" type="text/css" href="styles/style.css" />
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Template Main CSS File -->
+    <link href="assets/css/style.css" rel="stylesheet">
+
+    <!-- =======================================================
+  * Template Name: Personal - v2.1.0
+  * Template URL: https://bootstrapmade.com/personal-free-resume-bootstrap-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
 </head>
 
 <body>
-    <header class="header">
-        <h1>Space Jam</h1>
 
-        <nav class="big-menu">
-            <ul>
-                <li><a href="index.html" tabindex="1" accesskey="I">Inicio</a></li>
-                <li><a href="presentation.html" tabindex="2" accesskey="Q">Quiénes somos</a></li>
-                <li><a href="team.html" tabindex="3" accesskey="E">Equipo</a></li>
-                <li><a href="result.html" tabindex="4" accesskey="R">Resultados</a></li>
-                <li><a href="sponsors.html" tabindex="5" accesskey="P">Patrocinadores</a></li>
-            </ul>
-        </nav>
-        <nav class="small-menu menu-icon">
-            <em class="fa fa-bars"></em>
-            <ul class="menu-content">
-                <li><a href="index.html" tabindex="1" accesskey="I">Inicio</a></li>
-                <li><a href="presentation.html" tabindex="2" accesskey="Q">Quiénes somos</a></li>
-                <li><a href="team.html" tabindex="3" accesskey="E">Equipo</a></li>
-                <li><a href="result.html" tabindex="4" accesskey="R">Resultados</a></li>
-                <li><a href="sponsors.html" tabindex="5" accesskey="P">Patrocinadores</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- ======= Header ======= -->
+    <header id="header" class="header-tops">
+        <div class="container header-container">
 
-    <main>
-        <section class="home">
-            <h2>Bienvenid@s al Mundo de los Looney Tunes</h2>
-            <p class="image-home-p"><img alt="En esta imagen podemos ver al equipo Tune Squad en un tiempo muerto"
-                    class="image-home-img" src="https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77700269892.jpg"></p>
-            <div class="image-home-p">
-                <p class="image-home-p">En este portal encontrarás toda la información sobre tus jugadores favoritos.</p>
-                <p class="image-home-p">Aquí tienes todos los enlaces a nuestras redes sociales:</p>
-                
-                    <ul>
-                        <li><a href="https://twitter.com/WBLooneyTunes" accesskey="t" target="_blank"><img class="icon"
-                                    src="http://www.zerowastenetwork.org/B/img/twit.png" alt="Este es el logo de la red social Twitter">Twitter</a></li>
-                        <li><a href="https://www.facebook.com/LooneyTunes/" accesskey="f" target="_blank"><img class="icon"
-                                    src="data:image/jpeg;base64,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"
-                                    alt="Este es el logo de la red social Facebook">Facebook</a></li>
-                        <li><a href="https://www.youtube.com/channel/UC9trsD1jCTXXtN3xIOIU8gg" accesskey="y" target="_blank"><img
-                                    class="icon" src="https://i.pinimg.com/originals/de/1c/91/de1c91788be0d791135736995109272a.png"
-                                    alt="Este es el logo de la red social Youtube">Youtube</a></li>
-                    </ul>
-                
+            <h1><a href="index.html">Alba Cotarelo Tuñón</a></h1>
+            <!-- Uncomment below if you prefer to use an image logo -->
+            <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+            <h2>I'm a passionate <span>Software Developer</span></h2>
+            <h5>Machine Learning Researcher & Web Programmer</h5>
+
+            <nav class="nav-menu d-none d-lg-block">
+                <ul>
+                    <li class="active"><a href="#header">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#resume">Resume</a></li>
+                    <li><a href="#portfolio">Projects</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <!-- .nav-menu -->
+
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/alba-cotarelo-tu%C3%B1%C3%B3n-0775aa165/" target="_blank" class="linkedin"><i class="icofont-linkedin"></i></a>
+                <a href="https://github.com/albact7" target="_blank" class="github"><i class="fa fa-github"></i></a>
+                <a href="https://twitter.com/Albact7" target="_blank" class="twitter"><i class="icofont-twitter"></i></a>
             </div>
 
+        </div>
+    </header>
+    <!-- End Header -->
 
-        </section>
-    </main>
+    <!-- ======= About Section ======= -->
+    <section id="about" class="about">
+
+        <!-- ======= About Me ======= -->
+        <div class="about-me container">
+
+            <div class="section-title">
+                <h2>About</h2>
+                <p>Learn more about me</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4" data-aos="fade-right">
+                    <img src="assets/img/me.jpg" class="img-fluid" alt="">
+                    <img src="assets/img/logo.png" class="img-fluid my-logo" alt="">
+                </div>
+                <div class="col-lg-8 pt-4 pt-lg-0 content" data-aos="fade-left">
+                    <h3>Machine Learning &amp; Web Programming</h3>
+                    <p class="font-italic">
+                        I am currently doing a Web Engineering Master Degree in <a target="_blank" href="http://ingenieriainformatica.uniovi.es/">Escuela de Ingeniería Informática de Oviedo</a> and working with Machine Learning algorithms at <a target="_blank"
+                            href="http://mderg.grupos.uniovi.es/">Model-Driven Engineering Research Group</a>.
+                    </p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <ul>
+                                <li><i class="icofont-rounded-right"></i> <strong>Birthday:</strong> 16 April 1997</li>
+                                <li><i class="icofont-rounded-right"></i> <strong>City:</strong> Uviéu/Oviedo, Asturies, Spain</li>
+                                <li><i class="icofont-rounded-right"></i> <strong>Currently working in:</strong> Fundación Universidad de Oviedo</li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-6">
+                            <ul>
+                                <li><i class="icofont-rounded-right"></i> <strong>Degree:</strong> Master</li>
+                                <li><i class="icofont-rounded-right"></i> <strong>Email:</strong> alba164@gmail.com</li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <p>
+                        I've always loved maths... Now I love its applications. Logic puzzles are amazing, I was crazy about Professor Layton's videogames in my adolescence. I don't see any difference with my work as a software engineer, so I still enjoy it. </p>
+                    <p>My interest in Machine Learning started when I discovered the world of sports analytics and data modelling. Basketball has been my passion since I was a child. One day I realized there was a way of improving the game through coding,
+                        I am currently doing more research on this field.
+                    </p>
+                    <p>
+                        The principle that ruled my professional life since it started has been that technology should always be at the service of society, starting from schools and going all the way to company infraestructures. And that principle is reflected on my two main
+                        projects: Digiboard and Kassandra (Egida & Kassandra).
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        <!-- End About Me -->
+
+        <!-- ======= Counts ======= -->
+        <!--
+        <div class="counts container">
+
+            <div class="row">
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="count-box">
+                        <i class="icofont-simple-smile"></i>
+                        <span data-toggle="counter-up">232</span>
+                        <p>Happy Clients</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mt-5 mt-md-0">
+                    <div class="count-box">
+                        <i class="icofont-document-folder"></i>
+                        <span data-toggle="counter-up">521</span>
+                        <p>Projects</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mt-5 mt-lg-0">
+                    <div class="count-box">
+                        <i class="icofont-live-support"></i>
+                        <span data-toggle="counter-up">1,463</span>
+                        <p>Hours Of Support</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mt-5 mt-lg-0">
+                    <div class="count-box">
+                        <i class="icofont-users-alt-5"></i>
+                        <span data-toggle="counter-up">15</span>
+                        <p>Hard Workers</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    -->
+        <!-- End Counts -->
+
+        <!-- ======= Interests ======= -->
+        <div class="interests container">
+
+            <div class="section-title">
+                <h2>Skills in</h2>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-3 col-md-4">
+                    <div class="icon-box">
+                        <i class="ri-computer-line" style="color: #ffbb2c;"></i>
+                        <h3>Machine Learning</h3>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 mt-4 mt-md-0">
+                    <div class="icon-box">
+                        <i class="ri-base-station-line" style="color: #5578ff;"></i>
+                        <h3>Web Programming</h3>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 mt-4 mt-md-0">
+                    <div class="icon-box">
+                        <i class="ri-calendar-todo-line" style="color: #e80368;"></i>
+                        <h3>Desktop Applications</h3>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 mt-4 mt-lg-0">
+                    <div class="icon-box">
+                        <i class="ri-fingerprint-line" style="color: #e361ff;"></i>
+                        <h3>Web Security</h3>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 mt-4">
+                    <div class="icon-box">
+                        <i class="ri-paint-brush-line" style="color: #47aeff;"></i>
+                        <h3>SVG Graphic Design</h3>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 mt-4">
+                    <div class="icon-box">
+                        <i class="ri-basketball-fill" style="color: #ff5100;"></i>
+                        <h3>Loading Sports Analytics...</h3>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- End Interests -->
+
+    </section>
+    <!-- End About Section -->
+
+    <!-- ======= Resume Section ======= -->
+    <section id="resume" class="resume">
+        <div class="container">
+
+            <div class="section-title">
+                <h2>Resume</h2>
+                <p>What I did and what I'm doing</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
 
 
-    <footer class="footer">
-        <p>© Copyright: Warner Brothers Pictures, Inc.</p>
-        <a href="https://validator.w3.org/check?uri=referer" target="_blank"><img src="https://www.w3.org/html/logo/badge/html5-badge-h-solo.png"
-                alt="HTML5 Válido" title="HTML5 Válido" /></a>
-        <a href=" http://jigsaw.w3.org/css-validator/check/referer " target="_blank">
-            <img src=" http://jigsaw.w3.org/css-validator/images/vcss" alt="CSS válido" /></a>
-    </footer>
+                    <h3 class="resume-title">Education</h3>
+                    <div class="resume-item">
+                        <h4>Master on Web Engineering</h4>
+                        <h5>2019 - Present</h5>
+                        <p><em>Escuela de Ingeniería Informática, Universidad de Oviedo</em></p>
+                    </div>
+                    <div class="resume-item">
+                        <h4>Degree on Software Engineering</h4>
+                        <h5>2015 - 2019</h5>
+                        <p><em>Escuela de Ingeniería Informática, Universidad de Oviedo</em></p>
+                    </div>
+                    <div class="resume-item">
+                        <h4>Basketball Coach Level I</h4>
+                        <h5>2015</h5>
+                        <p><em>Federación de Baloncesto del Principado de Asturias</em></p>
+                    </div>
+                    <h3 class="resume-title">Achievements</h3>
+                    <div class="resume-item pb-0">
+                        <h4>Semifinalist 1st Edition INNCYBER Innovation Award</h4>
+                        <h5>2020</h5>
+                        <p><em>Project: <a href="https://github.com/antonioalfa22/egida" target="_blank" >Egida</a> and <a href="https://github.com/albact7/kassandra" target="_blank" >Kassandra</a>. Aimed to server security.</em></p>
+                    </div>
+                    <div class="resume-item pb-0">
+                        <h4>8/10 in Maths with Carmen Alonso</h4>
+                        <h5>2015</h5>
+                        <p><em>At IES Aramo, Oviedo. If you are a former student, you might appreciate that grade.</em></p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h3 class="resume-title">Professional Experience</h3>
+                    <div class="resume-item">
+                        <h4>Machine Learning Researching</h4>
+                        <h5>2019 - Present</h5>
+                        <p><em>Fundación Universidad de Oviedo</em></p>
+                        <p>
+                            <ul>
+                                <li>Tree search techniques</li>
+                                <li>Artificial Neural Networks with Tensorflow and Encog</li>
+                            </ul>
+                        </p>
+                    </div>
+                    <div class="resume-item">
+                        <h4>Frontend Developer</h4>
+                        <h5>March 2019 - August 2019</h5>
+                        <p><em>Vesubiocom S.L., Cabanaquinta/Cabañaquinta, Asturies</em></p>
+                        <p>
+                            <ul>
+                                <li>Frontend development with Angular</li>
+                            </ul>
+                        </p>
+                    </div>
+                    <div class="resume-item">
+                        <h4>Basketball Coach</h4>
+                        <h5>2015 - 2020</h5>
+                        <p><em><a href="https://art-chivobasquet.com/" target="_blank">Club Deportivo Art-Chivo</a></em></p>
+                        <p>
+                            <ul>
+                                <li>Minibasket</li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <!-- End Resume Section -->
+
+    <!-- ======= Services Section ======= -->
+    <!--
+    <section id="services" class="services">
+        <div class="container">
+
+            <div class="section-title">
+                <h2>Services</h2>
+                <p>My Services</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bxl-dribbble"></i></div>
+                        <h4><a href="">Lorem Ipsum</a></h4>
+                        <p>Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-file"></i></div>
+                        <h4><a href="">Sed ut perspiciatis</a></h4>
+                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0">
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-tachometer"></i></div>
+                        <h4><a href="">Magni Dolores</a></h4>
+                        <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4">
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-world"></i></div>
+                        <h4><a href="">Nemo Enim</a></h4>
+                        <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4">
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-slideshow"></i></div>
+                        <h4><a href="">Dele cardo</a></h4>
+                        <p>Quis consequatur saepe eligendi voluptatem consequatur dolor consequuntur</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4">
+                    <div class="icon-box">
+                        <div class="icon"><i class="bx bx-arch"></i></div>
+                        <h4><a href="">Divera don</a></h4>
+                        <p>Modi nostrum vel laborum. Porro fugit error sit minus sapiente sit aspernatur</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+-->
+    <!-- End Services Section -->
+
+    <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+
+            <div class="section-title">
+                <h2>Projects</h2>
+                <p>Projects I work in</p>
+            </div>
+            <!--
+            <div class="row">
+                <div class="col-lg-12 d-flex justify-content-center">
+                    <ul id="portfolio-flters">
+                        <li data-filter="*" class="filter-active">All</li>
+                        <li data-filter=".filter-app">App</li>
+                        <li data-filter=".filter-card">Card</li>
+                        <li data-filter=".filter-web">Web</li>
+                    </ul>
+                </div>
+            </div>
+        -->
+            <div class="row portfolio-container">
+
+                <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+                    <div class="portfolio-wrap">
+                        <img src="assets/img/projects/digiboard.png" class="img-fluid" alt="">
+                        <div class="portfolio-info">
+                            <h4>Digiboard</h4>
+                            <p>Low cost Digital board</p>
+                            <div class="portfolio-links">
+                                <a href="assets/img/projects/digiboard.png" data-gall="portfolioGallery" class="venobox" title="Digiboard"><i class="bx bx-plus"></i></a>
+                                <a href="https://twitter.com/Albact7/status/1229883760163860481?s=20" target="_blank" title="More Details"><i class="bx bx-link"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 portfolio-item filter-web">
+                    <div class="portfolio-wrap">
+                        <img src="assets/img/projects/kassandra_name_down.png" class="img-fluid" alt="">
+                        <div class="portfolio-info">
+                            <h4>Kassandra</h4>
+                            <p>User and entity behavior analytics (Egida & Kassandra)</p>
+                            <div class="portfolio-links">
+                                <a href="assets/img/projects/kassandra_name_down.png" data-gall="portfolioGallery" class="venobox" title="Egida & Kassandra"><i class="bx bx-plus"></i></a>
+                                <a href="https://github.com/albact7/kassandra" title="More Details" target="_blank"><i class="bx bx-link"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 portfolio-item filter-web">
+                    <div class="portfolio-wrap">
+                        <img src="assets/img/projects/partseador.jpg" class="img-fluid" alt="">
+                        <div class="portfolio-info">
+                            <h4>pARTseador</h4>
+                            <p>XLSX parser to beautify Asturian basketball schedules</p>
+                            <div class="portfolio-links">
+                                <a href="assets/img/projects/partseador.jpg" data-gall="portfolioGallery" class="venobox" title="pARTseador"><i class="bx bx-plus"></i></a>
+                                <a href="https://www.albact.ml/partser/" title="More Details" target="_blank"><i class="bx bx-link"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 portfolio-item filter-web">
+                    <div class="portfolio-wrap">
+                        <img src="assets/img/projects/basketballai.jpg" class="img-fluid" alt="">
+                        <div class="portfolio-info">
+                            <h4>Basketball AI</h4>
+                            <p>Loading...</p>
+                            <div class="portfolio-links">
+                                <a href="assets/img/projects/basketballai.jpg" data-gall="portfolioGallery" class="venobox" title="Egida & Kassandra"><i class="bx bx-plus"></i></a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+    <!-- End Portfolio Section -->
+
+    <!-- ======= Contact Section ======= -->
+    <section id="contact" class="contact">
+        <div class="container">
+
+            <div class="section-title">
+                <h2>Contact</h2>
+                <p>Contact Me</p>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-6 mt-4 mt-md-0 d-flex align-items-stretch">
+                    <div class="info-box">
+                        <i class="bx bx-share-alt"></i>
+                        <h3>Social Profiles</h3>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/alba-cotarelo-tu%C3%B1%C3%B3n-0775aa165/" target="_blank" class="linkedin"><i class="icofont-linkedin"></i></a>
+                            <a href="https://github.com/albact7" target="_blank" class="github"><i class="fa fa-github"></i></a>
+                            <a href="https://twitter.com/Albact7" target="_blank" class="twitter"><i class="icofont-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mt-4 mt-md-0 d-flex align-items-stretch">
+                    <div class="info-box">
+                        <i class="bx bx-envelope"></i>
+                        <h3>Email Me</h3>
+                        <p>alba164@gmail.com</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <form action="forms/contact.php" method="post" role="form" class="php-email-form mt-4">
+                <div class="form-row">
+                    <div class="col-md-6 form-group">
+                        <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" />
+                        <div class="validate"></div>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" />
+                        <div class="validate"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject" />
+                    <div class="validate"></div>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="Message"></textarea>
+                    <div class="validate"></div>
+                </div>
+                <div class="mb-3">
+                    <div class="loading">Loading</div>
+                    <div class="error-message"></div>
+                    <div class="sent-message">Your message has been sent. Thank you!</div>
+                </div>
+                <div class="text-center"><button type="submit">Send Message</button></div>
+            </form>
+
+        </div>
+    </section>
+    <!-- End Contact Section -->
+
+    <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/personal-free-resume-bootstrap-template/ -->
+        Designed by <a href="https://bootstrapmade.com/" target="_blank">BootstrapMade</a>
+    </div>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+    <script src="assets/vendor/counterup/counterup.min.js"></script>
+    <script src="assets/vendor/owl.carousel/owl.carousel.min.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/venobox/venobox.min.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="assets/js/main.js"></script>
 
 </body>
+
+</html>
