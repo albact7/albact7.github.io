@@ -156,18 +156,23 @@ function writeInHTML(partidos) {
                 info_partido = "info_partidoB";
             }
             back++;
-            $('#horariospartidos').append('<div class="categoria ' + info_partido + ' font-color">' +
-                '<div class="titulocategoria">' +
-                '<p class="titulocategoria font-color">' +
-                partidos[i][0] + '</p>' +
-                '</div>' +
-                '<div class="row"><p id="partido" class="p-partido local col-3 font-color">' + partidos[i][1] + '</p>' +
-                '<p id="partido" class="p-partido visitante col-3 font-color">' + partidos[i + 1][0] + '</p>' +
-                '<p id="partido" class="p-partido fecha col-2 font-color">' + partidos[i][2] + '</p>' +
-                '<p id="partido" class="p-partido fecha col-2 font-color">' + partidos[i + 1][1] + '</p>' +
-                '<p id="partido" class="p-partido pabellon col-2 font-color">' + partidos[i][3] + '</p></div>' +
+            try {
+                $('#horariospartidos').append('<div class="categoria ' + info_partido + ' font-color">' +
+                    '<div class="titulocategoria">' +
+                    '<p class="titulocategoria font-color">' +
+                    partidos[i][0] + '</p>' +
+                    '</div>' +
+                    '<div class="row"><p id="partido" class="p-partido local col-3 font-color">' + partidos[i][1] + '</p>' +
+                    '<p id="partido" class="p-partido visitante col-3 font-color">' + partidos[i + 1][0] + '</p>' +
+                    '<p id="partido" class="p-partido fecha col-2 font-color">' + partidos[i][2] + '</p>' +
+                    '<p id="partido" class="p-partido fecha col-2 font-color">' + partidos[i + 1][1] + '</p>' +
+                    '<p id="partido" class="p-partido pabellon col-2 font-color">' + partidos[i][3] + '</p></div>' +
 
-                '</div>');
+                    '</div>');
+            } catch {
+                console.error("There were some errors");
+            }
+
         }
     }
     cssChange();
