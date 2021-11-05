@@ -149,7 +149,7 @@ function writeInHTML(partidos) {
     var back = 0;
     var info_partido = "info_partidoA";
     for (i = 4; i < partidos.length; i += 2) {
-        if (!partidos[i][0].toString().includes("JUEGOS")) {
+        if (!partidos[i][0].toString().includes("JUEGOS") && !partidos[i][0].toString().includes("LIGA")) {
             if (back % 2 == 0) {
                 info_partido = "info_partidoA";
             } else {
