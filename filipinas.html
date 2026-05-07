@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Itinerario Filipinas 2026</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+    :root{
+      --bg:#faf9f7; --card:#ffffff; --ink:#2c2c2c; --muted:#7a7a7a; --line:#eae6e1;
+      --accent:#c8a45c; --accent-dark:#a07e3a; --deep:#1b3a4b; --soft:#f5f1eb;
+      --shadow:0 2px 16px rgba(0,0,0,.04); --shadow-lg:0 12px 48px rgba(0,0,0,.08); --radius:12px;
+    }
+    *{box-sizing:border-box; margin:0; padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'DM Sans', system-ui, -apple-system, sans-serif;
+      background:var(--bg); color:var(--ink); line-height:1.65;
+      min-height:100vh;
+    }
+    .wrap{max-width:1140px; margin:0 auto; padding:0 24px 80px;}
+
+    /* ANIMATIONS */
+    @keyframes fadeInUp{
+      from{opacity:0; transform:translateY(32px);}
+      to{opacity:1; transform:translateY(0);}
+    }
+    @keyframes fadeIn{
+      from{opacity:0;}
+      to{opacity:1;}
+    }
+    @keyframes shimmer{
+      0%{background-position:-200% 0;}
+      100%{background-position:200% 0;}
+    }
+    .anim-hidden{opacity:0; transform:translateY(32px); transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);}
+    .anim-visible{opacity:1; transform:translateY(0);}
+    .anim-delay-1{transition-delay:.1s;}
+    .anim-delay-2{transition-delay:.2s;}
+    .anim-delay-3{transition-delay:.3s;}
+
+    /* HERO */
+    .hero{
+      position:relative; margin:0 -24px; padding:100px 48px 70px;
+      background:linear-gradient(165deg, rgba(27,58,75,.88) 0%, rgba(27,58,75,.55) 50%, rgba(200,164,92,.25) 100%),
+                 url('https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=1400&q=80') center/cover no-repeat;
+      color:#fff; min-height:400px; display:flex; flex-direction:column; justify-content:flex-end;
+      overflow:hidden;
+    }
+    .hero::before{
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(ellipse at 30% 80%, rgba(200,164,92,.15) 0%, transparent 60%);
+      animation:fadeIn 2s ease-out;
+    }
+    .hero-inner{max-width:1140px; margin:0 auto; width:100%; position:relative; z-index:1;}
+    .hero h1{
+      font-family:'Playfair Display', serif; font-size:clamp(36px,5.5vw,60px); font-weight:800; line-height:1.08; margin-bottom:16px; letter-spacing:-0.02em;
+      animation:fadeInUp .9s cubic-bezier(.22,1,.36,1) both;
+    }
+    .hero p{
+      font-size:17px; color:rgba(255,255,255,.88); max-width:640px; margin-bottom:28px;
+      animation:fadeInUp .9s cubic-bezier(.22,1,.36,1) .15s both;
+    }
+    .hero-chips{display:flex; flex-wrap:wrap; gap:10px; animation:fadeInUp .9s cubic-bezier(.22,1,.36,1) .3s both;}
+    .hero-chip{
+      background:rgba(255,255,255,.1); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.2);
+      color:#fff; padding:10px 16px; border-radius:8px; font-size:12px; font-weight:500; letter-spacing:.02em;
+      transition:background .2s, transform .2s;
+    }
+    .hero-chip:hover{background:rgba(255,255,255,.2); transform:translateY(-2px);}
+
+    /* STATS */
+    .stats{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line);
+      border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-top:32px; box-shadow:var(--shadow);
+    }
+    .stat{background:var(--card); padding:28px 24px; transition:background .3s;}
+    .stat:hover{background:var(--soft);}
+    .stat .k{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; font-weight:600; margin-bottom:6px;}
+    .stat .v{font-size:18px; font-weight:700; color:var(--deep);}
+
+    /* SECTIONS */
+    .section{
+      margin-top:40px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow:var(--shadow); overflow:hidden;
+      transition:box-shadow .3s, transform .3s;
+    }
+    .section:hover{box-shadow:var(--shadow-lg); transform:translateY(-2px);}
+    .section-header{padding:28px 32px 24px; border-bottom:1px solid var(--line);}
+    .section-header h2{font-family:'Playfair Display', serif; font-size:26px; font-weight:700; color:var(--deep); margin-bottom:4px;}
+    .section-header p{color:var(--muted); font-size:14px;}
+    .table-wrap{padding:24px 28px; overflow-x:auto;}
+
+    /* MAIN MAP */
+    .map-shell{width:100%; height:560px; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);}
+    #map{width:100%; height:100%;}
+    .route-tooltip{background:#fff!important; border:1px solid var(--line)!important; color:var(--deep)!important; padding:6px 11px!important; border-radius:6px!important; font-size:12px!important; font-weight:600!important; font-family:'DM Sans',sans-serif!important; white-space:nowrap!important; box-shadow:0 2px 8px rgba(0,0,0,.1)!important;}
+    .route-tooltip-alt{background:#fff7ed!important; border:1px solid #f5c27a!important; color:#9a5b00!important; padding:6px 11px!important; border-radius:6px!important; font-size:12px!important; font-weight:700!important; font-family:'DM Sans',sans-serif!important; white-space:nowrap!important; box-shadow:0 2px 8px rgba(0,0,0,.12)!important;}
+    .place-links{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-top:20px;}
+    .place-link{
+      display:block; padding:14px 16px; border-radius:8px; background:var(--soft); border:1px solid var(--line);
+      color:var(--ink); text-decoration:none; transition:all .25s cubic-bezier(.22,1,.36,1);
+    }
+    .place-link:hover{border-color:var(--accent); transform:translateY(-3px); box-shadow:0 6px 20px rgba(200,164,92,.15);}
+    .place-link strong{display:block; margin-bottom:3px; color:var(--deep); font-size:13px; font-weight:700;}
+    .place-link span{font-size:11px; color:var(--muted);}
+    .map-note{margin-top:14px; color:var(--muted); font-size:12px; font-style:italic;}
+
+    /* MINI MAPS */
+    .mini-map-wrap{width:100%; height:240px; border-radius:10px; overflow:hidden; margin-bottom:18px; border:1px solid var(--line); box-shadow:0 4px 16px rgba(0,0,0,.06); transition:box-shadow .3s, transform .3s;}
+    .mini-map-wrap:hover{box-shadow:0 8px 32px rgba(0,0,0,.1); transform:translateY(-2px);}
+    .mini-map{width:100%; height:100%;}
+
+    /* TABLES */
+    table{width:100%; border-collapse:collapse; min-width:700px;}
+    thead th{background:var(--soft); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700; padding:12px 14px; border-bottom:2px solid var(--line); position:sticky; top:0; z-index:1;}
+    td{padding:13px 14px; border-bottom:1px solid var(--line); vertical-align:top; font-size:13px;}
+    tbody tr{transition:background .2s, transform .15s;}
+    tbody tr:hover{background:var(--soft); transform:scale(1.002);}
+    .date{font-weight:700; white-space:nowrap; color:var(--deep);}
+    .day{color:var(--muted); font-weight:600; white-space:nowrap; font-size:12px;}
+    .place{font-weight:700; color:var(--deep);}
+    .transport{line-height:1.55; color:#4a4a4a;}
+    .plan{line-height:1.6; color:#3d3d3d;}
+    .pill{display:inline-block; margin-top:4px; padding:4px 10px; border-radius:4px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; background:var(--soft); color:var(--accent-dark); border:1px solid var(--accent); transition:transform .2s;}
+    .pill:hover{transform:scale(1.05);}
+    .pill-pending{background:#fef9ee; color:#92680a; border-color:#e5c76b;}
+    .pill-booked{background:#edf7ed; color:#2e6b2e; border-color:#7bc67b;}
+
+    /* DETAILS / DESTINATION CARDS */
+    details{
+      border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-bottom:18px;
+      transition:all .3s cubic-bezier(.22,1,.36,1);
+    }
+    details[open]{box-shadow:0 4px 24px rgba(0,0,0,.06); transform:translateY(-1px);}
+    details summary{
+      padding:20px 26px; font-family:'Playfair Display', serif; font-size:21px; font-weight:700;
+      color:var(--deep); cursor:pointer; list-style:none; background:var(--soft);
+      border-bottom:1px solid transparent; transition:all .25s;
+    }
+    details[open] summary{border-bottom-color:var(--line); background:linear-gradient(180deg,var(--soft),#fff);}
+    details summary::-webkit-details-marker{display:none;}
+    details summary::after{content:"+"; float:right; font-family:'DM Sans'; font-size:24px; font-weight:400; color:var(--accent); transition:transform .3s cubic-bezier(.22,1,.36,1);}
+    details[open] summary::after{content:"\2212"; transform:rotate(180deg);}
+    details summary:hover{background:linear-gradient(180deg,#f0ece5,var(--soft));}
+    details > div{padding:22px 26px; line-height:1.75; font-size:13.5px; color:#3d3d3d; animation:fadeIn .4s ease-out;}
+    details > div p{margin-bottom:10px;}
+    details > div ul{margin:0 0 14px; padding-left:18px;}
+    details > div li{margin-bottom:5px; transition:transform .15s;}
+    details > div li:hover{transform:translateX(4px);}
+
+    /* SUB-HEADINGS */
+    .table-wrap h3{font-family:'Playfair Display', serif; font-size:18px; font-weight:700; color:var(--deep); margin:0 0 14px; padding-bottom:8px; border-bottom:1px solid var(--line);}
+    .table-wrap h3+table{margin-bottom:28px;}
+
+    /* ROUTE PROGRESS */
+    .route-progress{display:flex; align-items:center; justify-content:center; gap:0; padding:28px 0 12px; margin:16px 0;}
+    .route-dot{
+      width:14px; height:14px; border-radius:50%; background:var(--accent); border:3px solid var(--card);
+      box-shadow:0 0 0 2px var(--accent); position:relative; z-index:2;
+      transition:transform .3s; cursor:default;
+    }
+    .route-dot:hover{transform:scale(1.4);}
+    .route-dot-label{
+      position:absolute; bottom:-22px; left:50%; transform:translateX(-50%);
+      font-size:9px; font-weight:700; color:var(--deep); white-space:nowrap; letter-spacing:.03em;
+    }
+    .route-line{width:60px; height:3px; background:linear-gradient(90deg, var(--accent), var(--deep)); border-radius:2px; position:relative; overflow:hidden;}
+    .route-line::after{
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+      background-size:200% 100%; animation:shimmer 2s infinite;
+    }
+
+    /* FOOTER */
+    .foot{margin-top:40px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:32px; transition:box-shadow .3s;}
+    .foot:hover{box-shadow:var(--shadow-lg);}
+    .foot h3{font-family:'Playfair Display', serif; font-size:18px; color:var(--deep); margin-bottom:14px;}
+    .foot ul{padding-left:18px; line-height:1.9; font-size:13px;}
+    .foot a{color:var(--accent-dark); text-decoration:none; font-weight:500; border-bottom:1px solid transparent; transition:border-color .2s, color .2s;}
+    .foot a:hover{border-bottom-color:var(--accent); color:var(--deep);}
+    .foot .muted{color:var(--muted); font-size:12px; margin-top:12px; font-style:italic;}
+
+    /* SCROLL TO TOP */
+    .scroll-top{
+      position:fixed; bottom:28px; right:28px; width:44px; height:44px; border-radius:50%;
+      background:var(--deep); color:#fff; border:none; cursor:pointer; font-size:20px;
+      box-shadow:0 4px 16px rgba(27,58,75,.3); opacity:0; transform:translateY(20px);
+      transition:opacity .3s, transform .3s; z-index:999; display:flex; align-items:center; justify-content:center;
+    }
+    .scroll-top.visible{opacity:1; transform:translateY(0);}
+    .scroll-top:hover{background:var(--accent); transform:translateY(-3px) scale(1.05);}
+
+    /* RESPONSIVE */
+    @media(max-width:1000px){
+      .place-links{grid-template-columns:repeat(2,1fr)} .stats{grid-template-columns:1fr;}
+      .route-line{width:30px;}
+    }
+    @media(max-width:600px){
+      .wrap{padding:0 16px 60px;} .hero{padding:60px 20px 40px; margin:0 -16px;}
+      .place-links{grid-template-columns:1fr} .map-shell{height:380px;}
+      .section-header{padding:20px 18px;} .table-wrap{padding:16px;}
+      details summary{padding:14px 18px; font-size:17px;}
+      .stats{grid-template-columns:1fr;}
+      .mini-map-wrap{height:180px;}
+      .route-progress{flex-wrap:wrap; gap:4px;}
+      .route-line{width:20px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <h1>Filipinas<br>Julio &ndash; Agosto 2026</h1>
+        <p>Manila, Coron, El Nido, Bohol y Boracay. 12 dias efectivos recorriendo las mejores islas del archipielago.</p>
+        <div class="hero-chips">
+          <div class="hero-chip">Salida Madrid &middot; 20 julio &middot; 12:00</div>
+          <div class="hero-chip">Llegada Manila &middot; 21 julio &middot; 19:10</div>
+          <div class="hero-chip">Vuelta Manila &middot; 3 agosto &middot; 21:25</div>
+          <div class="hero-chip">Llegada Madrid &middot; 4 agosto &middot; 10:30</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats anim-hidden">
+      <div class="stat"><div class="k">Dias efectivos</div><div class="v">22 jul &ndash; 2 ago</div></div>
+      <div class="stat"><div class="k">Destinos</div><div class="v">Coron &middot; El Nido &middot; Bohol &middot; Boracay</div></div>
+      <div class="stat"><div class="k">Ruta</div><div class="v">Manila &rarr; Coron &rarr; El Nido &rarr; Bohol &rarr; Boracay &rarr; Manila</div></div>
+    </section>
+
+    <!-- ROUTE PROGRESS -->
+    <div class="route-progress anim-hidden">
+      <div class="route-dot" title="Manila"><span class="route-dot-label">MNL</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="Coron"><span class="route-dot-label">CRN</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="El Nido"><span class="route-dot-label">ENI</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="Bohol"><span class="route-dot-label">BOH</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="Boracay"><span class="route-dot-label">BOR</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="Manila"><span class="route-dot-label">MNL</span></div>
+    </div>
+
+    <!-- MAPA -->
+    <section class="section anim-hidden">
+      <div class="section-header">
+        <h2>Mapa del itinerario</h2>
+        <p>Mapa interactivo con la ruta completa.</p>
+      </div>
+      <div class="table-wrap">
+        <div class="map-shell">
+          <div id="map"></div>
+        </div>
+        <script>
+          (function(){
+            var locations = [
+              {name: "Manila",            lat: 14.5086, lon: 121.0198},
+              {name: "Coron / Busuanga",  lat: 12.1215, lon: 120.1002},
+              {name: "El Nido",           lat: 11.2023, lon: 119.4179},
+              {name: "Bohol / Panglao",   lat:  9.5780, lon: 123.7458},
+              {name: "Boracay / Caticlan", lat: 11.9245, lon: 121.9536},
+              {name: "Manila",            lat: 14.5086, lon: 121.0198}
+            ];
+            var map = L.map('map', {scrollWheelZoom: false}).setView([11.8, 121.2], 6);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 18,
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+            var latlngs = locations.map(function(loc){ return [loc.lat, loc.lon]; });
+            L.polyline(latlngs, {
+              color: '#1b3a4b', weight: 3, dashArray: '10 6',
+              lineCap: 'round', lineJoin: 'round', opacity: 0.85
+            }).addTo(map);
+            var uniqueStops = locations.slice(0, 5);
+            uniqueStops.forEach(function(loc, i){
+              L.circleMarker([loc.lat, loc.lon], {
+                radius: 9, fillColor: '#c8a45c', color: '#ffffff', weight: 3, fillOpacity: 1
+              }).addTo(map).bindTooltip((i+1) + '. ' + loc.name, {
+                permanent: true, direction: 'top', offset: [0, -12], className: 'route-tooltip'
+              });
+            });
+            map.fitBounds(L.latLngBounds(latlngs).pad(0.08));
+          })();
+        </script>
+        <div class="place-links">
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=14.5086&mlon=121.0198#map=11/14.5086/121.0198" target="_blank" rel="noopener"><strong>Manila</strong><span>Llegada y salida internacional</span></a>
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=12.1215&mlon=120.1002#map=11/12.1215/120.1002" target="_blank" rel="noopener"><strong>Coron / Busuanga</strong><span>Entrada a islas</span></a>
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=11.2023&mlon=119.4179#map=12/11.2023/119.4179" target="_blank" rel="noopener"><strong>El Nido</strong><span>Playas e island hopping</span></a>
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=9.5780&mlon=123.7458#map=11/9.5780/123.7458" target="_blank" rel="noopener"><strong>Bohol / Panglao</strong><span>Chocolate Hills y playa</span></a>
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=11.9245&mlon=121.9536#map=12/11.9245/121.9536" target="_blank" rel="noopener"><strong>Boracay / Caticlan</strong><span>Ultima isla y relax</span></a>
+        </div>
+        <div class="map-note">La linea marca el recorrido completo: Manila &rarr; Coron &rarr; El Nido &rarr; Bohol &rarr; Boracay &rarr; Manila.</div>
+      </div>
+    </section>
+
+    <!-- PLAN DIA POR DIA -->
+    <section class="section anim-hidden">
+      <div class="section-header"><h2>Plan dia por dia</h2><p>Tabla resumida con vuelos, traslados y plan principal de cada jornada.</p></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Dia</th><th>Lugar</th><th>Horario / transporte</th><th>Plan</th></tr></thead>
+          <tbody>
+            <tr><td class="date">20 julio</td><td class="day">Dia 0</td><td class="place">Asturias &rarr; Madrid &rarr; viaje</td><td class="transport">Volotea: Asturias&ndash;Madrid, 07:05 - 08:10 (2 pasajeros).<br>Salida de Madrid a las 12:00 hacia Manila.</td><td class="plan">Dia de viaje.</td></tr>
+            <tr><td class="date">21 julio</td><td class="day">Dia 1</td><td class="place">Manila</td><td class="transport">Llegada a Manila a las 19:10.</td><td class="plan">No da tiempo a nada: ir al alojamiento, cenar y descansar.</td></tr>
+            <tr><td class="date">22 julio</td><td class="day">Dia 2</td><td class="place">Manila / Coron</td><td class="transport">Manila (MNL) &rarr; Busuanga/Coron (USU). Ruta operativa; precio orientativo desde 51 &euro;.<br><span class="pill">Traslado a isla</span></td><td class="plan">Llegada/asentarse en Coron. Paseo, cena y atardecer en Hop Hostel.</td></tr>
+            <tr><td class="date">23 julio</td><td class="day">Dia 3</td><td class="place">Coron</td><td class="transport">&mdash;</td><td class="plan">Island hopping principal: Kayangan Lake, Twin Lagoon y Barracuda Lake. Si entra en el tour, a&ntilde;adir Banul Beach o Smith Beach.</td></tr>
+            <tr><td class="date">24 julio</td><td class="day">Dia 4</td><td class="place">Coron &rarr; El Nido</td><td class="transport">Busuanga/Coron (USU) &rarr; El Nido (ENI). Directo con AirSWIFT, aprox. 40 min. Referencia util: salidas entre 08:30 y 12:40.<br><span class="pill">Vuelo directo</span></td><td class="plan">Traslado a El Nido y llegada al alojamiento.</td></tr>
+            <tr><td class="date">25 julio</td><td class="day">Dia 5</td><td class="place">El Nido</td><td class="transport">&mdash;</td><td class="plan">Island hopping.</td></tr>
+            <tr><td class="date">26 julio</td><td class="day">Dia 6</td><td class="place">El Nido</td><td class="transport">&mdash;</td><td class="plan">Vuelta en motillo por playas.</td></tr>
+            <tr><td class="date">27 julio</td><td class="day">Dia 7</td><td class="place">El Nido &rarr; Bohol</td><td class="transport">El Nido (ENI) &rarr; Bohol/Panglao (TAG). Directo con AirSWIFT, aprox. 1 h 45 min.<br><span class="pill">Vuelo directo</span></td><td class="plan">Dia principalmente de traslado. Llegada, check-in en Panglao o zona base y paseo tranquilo.</td></tr>
+            <tr><td class="date">28 julio</td><td class="day">Dia 8</td><td class="place">Bohol</td><td class="transport">&mdash;</td><td class="plan">Dia de interior: Chocolate Hills + Philippine Tarsier Sanctuary de Corella + ruta de campo.</td></tr>
+            <tr><td class="date">29 julio</td><td class="day">Dia 9</td><td class="place">Bohol</td><td class="transport">&mdash;</td><td class="plan">Dia de playa en Panglao. Alona Beach o playas cercanas.</td></tr>
+            <tr><td class="date">30 julio</td><td class="day">Dia 10</td><td class="place">Traslado a Boracay</td><td class="transport">Bohol/Panglao (TAG) &rarr; Boracay/Caticlan (MPH). Ruta a revisar en buscador final; precio orientativo desde 33&ndash;37 &euro;.<br><span class="pill">Revisar antes de comprar</span></td><td class="plan">Dia de traslado. Llegada, check-in y primer paseo por la playa.</td></tr>
+            <tr><td class="date">31 julio</td><td class="day">Dia 11</td><td class="place">Boracay</td><td class="transport">&mdash;</td><td class="plan">Dia completo de playa. Relax, paseo y atardecer.</td></tr>
+            <tr><td class="date">1 agosto</td><td class="day">Dia 12</td><td class="place">Boracay</td><td class="transport">&mdash;</td><td class="plan">Segundo dia entero: velero al atardecer, snorkel, paddle o mas playa.</td></tr>
+            <tr><td class="date">2 agosto</td><td class="day">Dia 13</td><td class="place">Boracay / Manila</td><td class="transport">Boracay/Caticlan (MPH) &rarr; Manila (MNL). Directos frecuentes segun Google Flights.<br><span class="pill">Vuelta a Manila</span></td><td class="plan">Ultimo de los dias efectivos. Dia en Manila segun energias y hora real de llegada.</td></tr>
+            <tr><td class="date">3 agosto</td><td class="day">Dia 14</td><td class="place">Manila &rarr; Madrid</td><td class="transport">Salida de Manila a las 21:25.</td><td class="plan">Ultimo dia en Manila hasta ir al aeropuerto.</td></tr>
+            <tr><td class="date">4 agosto</td><td class="day">Dia 15</td><td class="place">Madrid &rarr; Asturias</td><td class="transport">Llegada a Madrid a las 10:30. Iberia Madrid&ndash;Asturias, 15:45 - 17:00.</td><td class="plan">Regreso final a Asturias.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VUELOS Y ALOJAMIENTO -->
+    <section class="section anim-hidden">
+      <div class="section-header">
+        <h2>Vuelos internos y alojamiento</h2>
+        <p>Estado actual de reservas. Los vuelos internacionales (Madrid &harr; Manila) ya estan reservados.</p>
+      </div>
+      <div class="table-wrap">
+        <h3>Vuelos internos</h3>
+        <table>
+          <thead><tr><th>Tramo</th><th>Ruta</th><th>Info</th><th>Precio orient.</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="place">Manila &rarr; Coron</td>
+              <td class="transport">MNL &rarr; USU (Busuanga)</td>
+              <td class="transport">Escala en Cebu. ~3 h 40 total. Varias aerolineas.</td>
+              <td>~51&ndash;120 &euro;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+            <tr>
+              <td class="place">Coron &rarr; El Nido</td>
+              <td class="transport">USU &rarr; ENI</td>
+              <td class="transport">Directo con AirSWIFT. ~40 min. Salidas entre 08:30 y 12:40.</td>
+              <td>~60&ndash;90 &euro;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+            <tr>
+              <td class="place">El Nido &rarr; Bohol</td>
+              <td class="transport">ENI &rarr; TAG (Panglao)</td>
+              <td class="transport">Directo con AirSWIFT. ~1 h 45 min.</td>
+              <td>~80&ndash;110 &euro;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+            <tr>
+              <td class="place">Bohol &rarr; Boracay</td>
+              <td class="transport">TAG &rarr; MPH (Caticlan)</td>
+              <td class="transport">Ruta mas incierta. Revisar en buscador final; puede haber escala.</td>
+              <td>~33&ndash;37 &euro;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+            <tr>
+              <td class="place">Boracay &rarr; Manila</td>
+              <td class="transport">MPH &rarr; MNL</td>
+              <td class="transport">Directos frecuentes. Varias aerolineas (Cebu Pacific, PAL&hellip;).</td>
+              <td>~40&ndash;60 &euro;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Alojamiento</h3>
+        <table>
+          <thead><tr><th>Destino</th><th>Noches</th><th>Fechas</th><th>Hotel</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="place">Manila (llegada)</td>
+              <td>1 noche</td>
+              <td>21 jul</td>
+              <td class="transport">&mdash;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+            <tr>
+              <td class="place">Coron</td>
+              <td>2 noches</td>
+              <td>22&ndash;23 jul</td>
+              <td class="transport">&mdash;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+            <tr>
+              <td class="place">El Nido</td>
+              <td>3 noches</td>
+              <td>24&ndash;26 jul</td>
+              <td class="transport">&mdash;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+            <tr>
+              <td class="place">Bohol / Panglao</td>
+              <td>3 noches</td>
+              <td>27&ndash;29 jul</td>
+              <td class="transport">&mdash;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+            <tr>
+              <td class="place">Boracay</td>
+              <td>3 noches</td>
+              <td>30 jul &ndash; 1 ago</td>
+              <td class="transport">&mdash;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+            <tr>
+              <td class="place">Manila (vuelta)</td>
+              <td>1 noche</td>
+              <td>2 ago</td>
+              <td class="transport">&mdash;</td>
+              <td><span class="pill pill-pending">Pendiente</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- QUE HACER EN CADA DESTINO -->
+    <section class="section anim-hidden">
+      <div class="section-header">
+        <h2>Que hacer en cada destino</h2>
+        <p>Info detallada por destino: como llegar, dias recomendados y plan. <strong>No vamos a Cebu</strong> en esta ruta.</p>
+      </div>
+      <div class="table-wrap">
+
+        <details open>
+          <summary>Manila</summary>
+          <div>
+            <div class="mini-map-wrap"><div class="mini-map" id="map-manila"></div></div>
+            <p><strong>Como llegar:</strong> Vuelo internacional directo desde Madrid.</p>
+            <p><strong>Dias en la ruta:</strong> Llegada (21 jul) + ultimo dia antes de volver (3 ago).</p>
+            <p><strong>Dia:</strong></p>
+            <ul>
+              <li>Intramuros: ayuntamiento y catedral.</li>
+              <li>Fuerte de Santiago.</li>
+              <li>El centro comercial palero (camiseta de baloncesto ~8 &euro; pero se regatea).</li>
+              <li>Por el puerto y un CC gigante (meh, prescindible en mi opinion).</li>
+              <li>Investigar restaurantes &ldquo;caros&rdquo; para alli &mdash; en realidad baratisimos para nosotros. <em>Disclaimer:</em> zona de ricos filipinos, precios de lujo para ellos = precio normal europeo.</li>
+            </ul>
+            <p><strong>Tarde / Noche:</strong></p>
+            <ul>
+              <li>Paseo nocturno entre los rascacielos.</li>
+              <li>Unas cervecitas en la calle de los ricos.</li>
+              <li>Salir de fiesta (la fiesta no acaba muy tarde, asi que el dia siguiente es viable).</li>
+            </ul>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Coron / Busuanga</summary>
+          <div>
+            <div class="mini-map-wrap"><div class="mini-map" id="map-coron"></div></div>
+            <p><strong>Como llegar:</strong> Escala en Cebu. 3 h 40 desde MNL. ~120 &euro; solo ida.</p>
+            <p><strong>Dias:</strong> 3 dias enteros (22&ndash;24 jul).</p>
+            <p><strong>Plan:</strong></p>
+            <ul>
+              <li><strong>Island hopping 1 (lo top):</strong> Ir primero a lo que mas se llena &mdash; Kayangan Lake, Twin Lagoon y Barracuda Lake. Despues Banul Beach o Smith Beach. Mirar tours y preguntar por privados por si compensa.</li>
+              <li><strong>Island hopping 2 (Escapade Tour / Banana-Malcapuya):</strong> Islas mas alejadas con playas espectaculares. Banana Island, Coco Beach, Malcapuya Island y Bulog Dos / Waling Waling.</li>
+              <li><strong>Atardecer en Hop Hostel:</strong> Rooftop con las mejores vistas de Coron y orientacion perfecta para la puesta de sol. Los fines de semana suelen tener DJ. Llegar sobre las 17:00 para coger buen sitio.</li>
+            </ul>
+            <p><strong>Importante &mdash; epoca de lluvias (jun&ndash;nov):</strong></p>
+            <ul>
+              <li>El aeropuerto de Coron es muy peque&ntilde;o: si hace mal clima se cancelan o retrasan vuelos.</li>
+              <li>Lo mismo con los barcos a El Nido: si hay mala mar, cancelados.</li>
+              <li>Si luego vas a El Nido, reservar el barco con antelacion.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details open>
+          <summary>El Nido</summary>
+          <div>
+            <div class="mini-map-wrap"><div class="mini-map" id="map-elnido"></div></div>
+            <p><strong>Como llegar:</strong> Vuelo a Puerto Princesa y luego bus/furgoneta a El Nido (4&ndash;5 h por tierra). 60&ndash;90 &euro;, 1 h 20 desde MNL. Tambien vuelo directo con AirSWIFT desde Coron (40 min).</p>
+            <p><strong>Dias:</strong> 3 dias enteros (25&ndash;27 jul).</p>
+            <p><strong>Plan:</strong></p>
+            <ul>
+              <li><strong>Island hopping</strong> en las islas de la bahia de Bacuit.</li>
+              <li><strong>Playas:</strong> Nacpan, Las Caba&ntilde;as, Lio Beach.</li>
+              <li><strong>Atardecer en Corong Corong:</strong> playa desde la que se ven puestas de sol de infarto.</li>
+              <li><strong>Comer a la brasa:</strong> en la playa de El Nido Town hay muchos sitios. Angel Wish es de los mejores.</li>
+              <li>Vuelta en motillo por playas.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Bohol / Panglao</summary>
+          <div>
+            <div class="mini-map-wrap"><div class="mini-map" id="map-bohol"></div></div>
+            <p><strong>Como llegar:</strong> Desde MNL 1 h 25 a Panglao. ~55 &euro;.</p>
+            <p><strong>Dias:</strong> 2 dias enteros (28&ndash;29 jul).</p>
+            <p><strong>Plan:</strong></p>
+            <ul>
+              <li><strong>1 dia monta&ntilde;as y monos:</strong> Chocolate Hills + Philippine Tarsier Sanctuary de Corella + ruta de campo.</li>
+              <li><strong>1 dia playas:</strong> En Panglao, Alona Beach y alrededores. En Alona tambien hay vida nocturna de turisteo.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Boracay</summary>
+          <div>
+            <div class="mini-map-wrap"><div class="mini-map" id="map-boracay"></div></div>
+            <p><strong>Como llegar:</strong> Avion 1 h desde MNL + barco hasta la isla. ~40 &euro; solo ida + barco + tasas. Para entrar en la isla hay que hacer una movida burocratica, pero le puedes pagar a un filipino para que te lo gestione.</p>
+            <p><strong>Dias:</strong> 2 dias enteros (31 jul &ndash; 1 ago).</p>
+            <p><strong>Alojamiento:</strong> Resort estandar.</p>
+            <p><strong>Plan:</strong></p>
+            <ul>
+              <li><strong>Playas paradisiacas.</strong> Visitar varias de la isla. Dejar tiempo para dia de playa puro.</li>
+              <li><strong>Tambisaan Beach</strong> (se llega en barco).</li>
+              <li><strong>Velero al atardecer:</strong> navegar con la puesta de sol.</li>
+              <li><strong>Actividades:</strong> quad, tirolina, motos de agua, paddle surf, snorkel.</li>
+              <li><strong>Vuelta a la isla en motillo:</strong> el trafico esta bien tipo pueblo y se puede alquilar.</li>
+              <li><strong>Fiesta nocturna:</strong> turistica pero guay.</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- FUENTES -->
+    <section class="foot anim-hidden">
+      <h3>Fuentes</h3>
+      <ul>
+        <li><a href="https://www.skyscanner.net/routes/mnl/usu/manila-ninoy-aquino-to-busuanga.html" target="_blank" rel="noopener">Skyscanner &middot; MNL &rarr; USU</a></li>
+        <li><a href="https://www.skyscanner.net/routes/usu/eni/busuanga-to-el-nido.html" target="_blank" rel="noopener">Skyscanner &middot; USU &rarr; ENI</a></li>
+        <li><a href="https://www.skyscanner.net/routes/eni/tag/el-nido-to-bohol-panglao-international.html" target="_blank" rel="noopener">Skyscanner &middot; ENI &rarr; TAG</a></li>
+        <li><a href="https://www.google.com/travel/flights" target="_blank" rel="noopener">Google Flights &middot; comprobacion de frecuencia</a></li>
+        <li><a href="https://wiki.openstreetmap.org/wiki/Using_OpenStreetMap" target="_blank" rel="noopener">OSM &middot; uso de mapas embebidos</a></li>
+      </ul>
+      <p class="muted">El mapa usa teselas de OpenStreetMap con la ruta superpuesta mediante Leaflet.</p>
+    </section>
+
+  </div>
+
+  <!-- SCROLL TO TOP -->
+  <button class="scroll-top" id="scrollTop" aria-label="Volver arriba">&uarr;</button>
+
+  <!-- MINI MAPS + SCROLL ANIMATIONS -->
+  <script>
+    (function(){
+      // Scroll-triggered animations
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){
+            e.target.classList.add('anim-visible');
+            observer.unobserve(e.target);
+          }
+        });
+      }, {threshold: 0.08, rootMargin: '0px 0px -40px 0px'});
+      document.querySelectorAll('.anim-hidden').forEach(function(el){ observer.observe(el); });
+
+      // Scroll to top button
+      var btn = document.getElementById('scrollTop');
+      window.addEventListener('scroll', function(){
+        btn.classList.toggle('visible', window.scrollY > 400);
+      });
+      btn.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+      
+      // Mini maps for each destination
+      var miniMaps = [
+        {
+          id: 'map-manila', lat: 14.5908, lon: 120.9750, zoom: 14, label: 'Manila',
+          pois: [
+            {name: 'Intramuros', lat: 14.5908, lon: 120.9750},
+            {name: 'Manila Cathedral', lat: 14.59147, lon: 120.97356},
+            {name: 'Fort Santiago', lat: 14.59417, lon: 120.97044}
+          ],
+          extraPois: [
+            {name: 'Rizal Park', lat: 14.5826, lon: 120.9790}
+          ]
+        },
+        {
+          id: 'map-coron', lat: 11.975, lon: 120.205, zoom: 12, label: 'Coron / Busuanga',
+          pois: [
+            {name: 'Kayangan Lake', lat: 11.96105, lon: 120.22626},
+            {name: 'Twin Lagoon', lat: 11.94772, lon: 120.20950},
+            {name: 'Barracuda Lake', lat: 11.95505, lon: 120.21670},
+            {name: 'Hop Hostel', lat: 11.9986, lon: 120.2044}
+          ],
+          extraPois: [
+            {name: 'Mount Tapyas', lat: 11.9959, lon: 120.2019},
+            {name: 'Maquinit Hot Spring', lat: 12.0066, lon: 120.1674},
+            {name: 'Siete Pecados', lat: 12.0234, lon: 120.1778}
+          ]
+        },
+        {
+          id: 'map-elnido', lat: 11.18, lon: 119.41, zoom: 12, label: 'El Nido',
+          pois: [
+            {name: 'Nacpan Beach', lat: 11.3050, lon: 119.4510},
+            {name: 'Las Cabañas Beach', lat: 11.1441, lon: 119.3930},
+            {name: 'Lio Beach', lat: 11.2457, lon: 119.4123},
+            {name: 'Corong Corong', lat: 11.1673, lon: 119.3975}
+          ],
+          extraPois: [
+            {name: 'Secret Lagoon', lat: 11.2479, lon: 119.3421},
+            {name: 'Seven Commandos Beach', lat: 11.2212, lon: 119.3653},
+            {name: 'Big Lagoon', lat: 11.2608, lon: 119.3427}
+          ]
+        },
+        {
+          id: 'map-bohol', lat: 9.70, lon: 124.02, zoom: 11, label: 'Bohol / Panglao',
+          pois: [
+            {name: 'Chocolate Hills', lat: 9.82957, lon: 124.13835},
+            {name: 'Tarsier Sanctuary (Corella)', lat: 9.68723, lon: 123.94155},
+            {name: 'Alona Beach', lat: 9.5489, lon: 123.7740}
+          ],
+          extraPois: [
+            {name: 'Loboc River', lat: 9.6402, lon: 124.0344},
+            {name: 'Baclayon Church', lat: 9.6249, lon: 123.9127},
+            {name: 'Hinagdanan Cave', lat: 9.6285, lon: 123.7994}
+          ]
+        },
+        {
+          id: 'map-boracay', lat: 11.965, lon: 121.93, zoom: 13, label: 'Boracay',
+          pois: [
+            {name: 'White Beach', lat: 11.9674, lon: 121.9248},
+            {name: 'Tambisaan Beach', lat: 11.9500, lon: 121.9470}
+          ],
+          extraPois: [
+            {name: 'Puka Beach', lat: 11.9849, lon: 121.9289},
+            {name: "Willy's Rock", lat: 11.9693, lon: 121.9189},
+            {name: 'Bulabog Beach', lat: 11.9647, lon: 121.9347}
+          ]
+        }
+      ];
+
+      var initialized = {};
+      function initMiniMap(cfg){
+        if(initialized[cfg.id]) return;
+        var el = document.getElementById(cfg.id);
+        if(!el || el.offsetHeight === 0) return;
+        var m = L.map(cfg.id, {scrollWheelZoom: false, zoomControl: true, dragging: true, attributionControl: false});
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18}).addTo(m);
+
+        var bounds = [];
+        (cfg.pois || []).forEach(function(poi, idx){
+          bounds.push([poi.lat, poi.lon]);
+          var isMain = idx === 0;
+          L.circleMarker([poi.lat, poi.lon], {
+            radius: isMain ? 8 : 6,
+            fillColor: isMain ? '#c8a45c' : '#1b3a4b',
+            color: '#ffffff',
+            weight: 2,
+            fillOpacity: 0.95
+          }).addTo(m).bindTooltip(poi.name, {
+            permanent: false,
+            direction: 'top',
+            offset: [0, -10],
+            className: 'route-tooltip'
+          });
+        });
+
+        (cfg.extraPois || []).forEach(function(poi){
+          bounds.push([poi.lat, poi.lon]);
+          L.circleMarker([poi.lat, poi.lon], {
+            radius: 6,
+            fillColor: '#f59e0b',
+            color: '#ffffff',
+            weight: 2,
+            fillOpacity: 0.95
+          }).addTo(m).bindTooltip(poi.name, {
+            permanent: false,
+            direction: 'top',
+            offset: [0, -10],
+            className: 'route-tooltip-alt'
+          });
+        });
+
+        if(bounds.length){
+          m.fitBounds(bounds, {padding: [24, 24]});
+          if(cfg.zoom){
+            setTimeout(function(){
+              if(m.getZoom() > cfg.zoom) m.setZoom(cfg.zoom);
+            }, 0);
+          }
+        } else {
+          m.setView([cfg.lat, cfg.lon], cfg.zoom || 12);
+        }
+
+        initialized[cfg.id] = true;
+        setTimeout(function(){ m.invalidateSize(); }, 200);
+      }
+
+      // Init all visible mini maps after a delay
+      setTimeout(function(){
+        miniMaps.forEach(function(cfg){ initMiniMap(cfg); });
+      }, 800);
+
+      // Re-init on details toggle
+      document.querySelectorAll('details').forEach(function(d){
+        d.addEventListener('toggle', function(){
+          if(d.open){
+            setTimeout(function(){
+              miniMaps.forEach(function(cfg){ initMiniMap(cfg); });
+            }, 150);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
