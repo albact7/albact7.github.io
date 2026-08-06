@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Itinerario de viaje por Albania del 31 de agosto al 7 de septiembre de 2026." />
+  <title>Itinerario Albania 2026</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: #faf9f7;
+      --card: #ffffff;
+      --ink: #2c2c2c;
+      --muted: #7a7a7a;
+      --line: #eae6e1;
+      --accent: #c62828;
+      --accent-dark: #8e1b1b;
+      --deep: #172126;
+      --soft: #f7f1f0;
+      --shadow: 0 2px 16px rgba(0, 0, 0, .04);
+      --shadow-lg: 0 12px 48px rgba(0, 0, 0, .08);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(32px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    .anim-hidden {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .7s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .anim-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .anim-delay-1 {
+      transition-delay: .1s;
+    }
+
+    .anim-delay-2 {
+      transition-delay: .2s;
+    }
+
+    .anim-delay-3 {
+      transition-delay: .3s;
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      margin: 0 -24px;
+      padding: 100px 48px 70px;
+      background: linear-gradient(165deg, rgba(23, 33, 38, .88) 0%, rgba(23, 33, 38, .54) 50%, rgba(198, 40, 40, .24) 100%),
+        url('https://images.unsplash.com/photo-1724160608632-92855d7d6924?auto=format&fit=crop&w=1600&q=82') center/cover no-repeat;
+      color: #fff;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 80%, rgba(198, 40, 40, .16) 0%, transparent 60%);
+      animation: fadeIn 2s ease-out;
+    }
+
+    .hero-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 5.5vw, 60px);
+      font-weight: 800;
+      line-height: 1.08;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+      animation: fadeInUp .9s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .hero p {
+      font-size: 17px;
+      color: rgba(255, 255, 255, .88);
+      max-width: 640px;
+      margin-bottom: 28px;
+      animation: fadeInUp .9s cubic-bezier(.22, 1, .36, 1) .15s both;
+    }
+
+    .hero-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      animation: fadeInUp .9s cubic-bezier(.22, 1, .36, 1) .3s both;
+    }
+
+    .hero-chip {
+      background: rgba(255, 255, 255, .1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, .2);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .02em;
+      transition: background .2s, transform .2s;
+    }
+
+    .hero-chip:hover {
+      background: rgba(255, 255, 255, .2);
+      transform: translateY(-2px);
+    }
+
+    .clocks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+      animation: fadeInUp .9s cubic-bezier(.22, 1, .36, 1) .4s both;
+    }
+
+    .clock-card {
+      background: rgba(255, 255, 255, .1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, .2);
+      border-radius: 10px;
+      padding: 14px 22px;
+      min-width: 160px;
+    }
+
+    .clock-card .city {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255, 255, 255, .75);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .clock-card .time {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .clock-card .date {
+      font-size: 12px;
+      color: rgba(255, 255, 255, .8);
+      margin-top: 4px;
+    }
+
+    /* STATS */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat {
+      background: var(--card);
+      padding: 28px 24px;
+      transition: background .3s;
+    }
+
+    .stat:hover {
+      background: var(--soft);
+    }
+
+    .stat .k {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .stat .v {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--deep);
+    }
+
+    /* SECTIONS */
+    .section {
+      margin-top: 40px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: box-shadow .3s, transform .3s;
+    }
+
+    .section:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .section-header {
+      padding: 28px 32px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--deep);
+      margin-bottom: 4px;
+    }
+
+    .section-header p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .table-wrap {
+      padding: 24px 28px;
+      overflow-x: auto;
+    }
+
+    /* MAIN MAP */
+    .map-shell {
+      width: 100%;
+      height: 560px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .route-tooltip {
+      background: #fff !important;
+      border: 1px solid var(--line) !important;
+      color: var(--deep) !important;
+      padding: 6px 11px !important;
+      border-radius: 6px !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      font-family: 'DM Sans', sans-serif !important;
+      white-space: nowrap !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .1) !important;
+    }
+
+    .route-tooltip-alt {
+      background: #fff7ed !important;
+      border: 1px solid #f5c27a !important;
+      color: #9a5b00 !important;
+      padding: 6px 11px !important;
+      border-radius: 6px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      font-family: 'DM Sans', sans-serif !important;
+      white-space: nowrap !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .12) !important;
+    }
+
+    .place-links {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .place-link {
+      display: block;
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      text-decoration: none;
+      transition: all .25s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .place-link:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(198, 40, 40, .16);
+    }
+
+    .place-link strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--deep);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .place-link span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .map-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      font-style: italic;
+    }
+
+    /* MINI MAPS */
+    .mini-map-wrap {
+      width: 100%;
+      height: 240px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .06);
+      transition: box-shadow .3s, transform .3s;
+    }
+
+    .mini-map-wrap:hover {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .1);
+      transform: translateY(-2px);
+    }
+
+    .mini-map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* TABLES */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    thead th {
+      background: var(--soft);
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    tbody tr {
+      transition: background .2s, transform .15s;
+    }
+
+    tbody tr:hover {
+      background: var(--soft);
+      transform: scale(1.002);
+    }
+
+    .date {
+      font-weight: 700;
+      white-space: nowrap;
+      color: var(--deep);
+    }
+
+    .day {
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    .place {
+      font-weight: 700;
+      color: var(--deep);
+    }
+
+    .transport {
+      line-height: 1.55;
+      color: #4a4a4a;
+    }
+
+    .plan {
+      line-height: 1.6;
+      color: #3d3d3d;
+    }
+
+    .pill {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      background: var(--soft);
+      color: var(--accent-dark);
+      border: 1px solid var(--accent);
+      transition: transform .2s;
+    }
+
+    .pill:hover {
+      transform: scale(1.05);
+    }
+
+    .pill-pending {
+      background: #fef9ee;
+      color: #92680a;
+      border-color: #e5c76b;
+    }
+
+    .pill-booked {
+      background: #edf7ed;
+      color: #2e6b2e;
+      border-color: #7bc67b;
+    }
+
+    /* DETAILS / DESTINATION CARDS */
+    details {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 18px;
+      transition: all .3s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    details[open] {
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .06);
+      transform: translateY(-1px);
+    }
+
+    details summary {
+      padding: 20px 26px;
+      font-family: 'Playfair Display', serif;
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--deep);
+      cursor: pointer;
+      list-style: none;
+      background: var(--soft);
+      border-bottom: 1px solid transparent;
+      transition: all .25s;
+    }
+
+    details[open] summary {
+      border-bottom-color: var(--line);
+      background: linear-gradient(180deg, var(--soft), #fff);
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details summary::after {
+      content: "+";
+      float: right;
+      font-family: 'DM Sans';
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--accent);
+      transition: transform .3s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    details[open] summary::after {
+      content: "\2212";
+      transform: rotate(180deg);
+    }
+
+    details summary:hover {
+      background: linear-gradient(180deg, #f0ece5, var(--soft));
+    }
+
+    details>div {
+      padding: 22px 26px;
+      line-height: 1.75;
+      font-size: 13.5px;
+      color: #3d3d3d;
+      animation: fadeIn .4s ease-out;
+    }
+
+    details>div p {
+      margin-bottom: 10px;
+    }
+
+    details>div ul {
+      margin: 0 0 14px;
+      padding-left: 18px;
+    }
+
+    details>div li {
+      margin-bottom: 5px;
+      transition: transform .15s;
+    }
+
+    details>div li:hover {
+      transform: translateX(4px);
+    }
+
+    /* SUB-HEADINGS */
+    .table-wrap h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--deep);
+      margin: 0 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table-wrap h3+table {
+      margin-bottom: 28px;
+    }
+
+    /* ROUTE PROGRESS */
+    .route-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 28px 0 12px;
+      margin: 16px 0;
+    }
+
+    .route-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid var(--card);
+      box-shadow: 0 0 0 2px var(--accent);
+      position: relative;
+      z-index: 2;
+      transition: transform .3s;
+      cursor: default;
+    }
+
+    .route-dot:hover {
+      transform: scale(1.4);
+    }
+
+    .route-dot-label {
+      position: absolute;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--deep);
+      white-space: nowrap;
+      letter-spacing: .03em;
+    }
+
+    .route-line {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--deep));
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .route-line::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .6), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+
+    /* FOOTER */
+    .foot {
+      margin-top: 40px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      transition: box-shadow .3s;
+    }
+
+    .foot:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .foot h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      color: var(--deep);
+      margin-bottom: 14px;
+    }
+
+    .foot ul {
+      padding-left: 18px;
+      line-height: 1.9;
+      font-size: 13px;
+    }
+
+    .foot a {
+      color: var(--accent-dark);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid transparent;
+      transition: border-color .2s, color .2s;
+    }
+
+    .foot a:hover {
+      border-bottom-color: var(--accent);
+      color: var(--deep);
+    }
+
+    .foot .muted {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 12px;
+      font-style: italic;
+    }
+
+    /* SCROLL TO TOP */
+    .scroll-top {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--deep);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      box-shadow: 0 4px 16px rgba(23, 33, 38, .3);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .3s, transform .3s;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scroll-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scroll-top:hover {
+      background: var(--accent);
+      transform: translateY(-3px) scale(1.05);
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:1000px) {
+      .place-links {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .route-line {
+        width: 30px;
+      }
+    }
+
+    @media(max-width:600px) {
+      .wrap {
+        padding: 0 16px 60px;
+      }
+
+      .hero {
+        padding: 60px 20px 40px;
+        margin: 0 -16px;
+      }
+
+      .place-links {
+        grid-template-columns: 1fr
+      }
+
+      .map-shell {
+        height: 380px;
+      }
+
+      .section-header {
+        padding: 20px 18px;
+      }
+
+      .table-wrap {
+        padding: 16px;
+      }
+
+      details summary {
+        padding: 14px 18px;
+        font-size: 17px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-map-wrap {
+        height: 180px;
+      }
+
+      .route-progress {
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .route-line {
+        width: 20px;
+      }
+    }
+  
+
+    /* ALBANIA-SPECIFIC BLOCKS */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .info-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 18px 20px;
+      background: var(--soft);
+    }
+
+    .info-card h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      color: var(--deep);
+      margin-bottom: 8px;
+    }
+
+    .info-card p,
+    .info-card li {
+      font-size: 13px;
+    }
+
+    .info-card ul {
+      padding-left: 18px;
+    }
+
+    .callout {
+      margin-top: 16px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--accent);
+      background: #fff7f7;
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: #3d3d3d;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px var(--line);
+    }
+
+    .legend-dot.main { background: var(--accent); }
+    .legend-dot.poi { background: var(--deep); }
+    .legend-dot.extra { background: #f59e0b; }
+    .legend-dot.hotel { background: #2e6b2e; }
+
+    @media(max-width:700px) {
+      .info-grid { grid-template-columns: 1fr; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <h1>Albania<br>Agosto &ndash; Septiembre 2026</h1>
+        <p>Ruta en coche por Tirana, la Riviera Albanesa, Butrinto, Gjirokast&euml;r y Berat.</p>
+        <div class="hero-chips">
+          <div class="hero-chip">Salida Barcelona &middot; 31 agosto &middot; 19:15</div>
+          <div class="hero-chip">Llegada Tirana &middot; 31 agosto &middot; 21:50</div>
+          <div class="hero-chip">Vuelta Tirana &middot; 7 septiembre &middot; 18:55</div>
+          <div class="hero-chip">Llegada Barcelona &middot; 7 septiembre &middot; 21:35</div>
+        </div>
+        <div class="clocks">
+          <div class="clock-card">
+            <div class="city">Barcelona</div>
+            <div class="time" id="clock-barcelona">&mdash;</div>
+            <div class="date" id="date-barcelona">&mdash;</div>
+          </div>
+          <div class="clock-card">
+            <div class="city">Tirana</div>
+            <div class="time" id="clock-tirana">&mdash;</div>
+            <div class="date" id="date-tirana">&mdash;</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats anim-hidden">
+      <div class="stat">
+        <div class="k">Duraci&oacute;n</div>
+        <div class="v">8 d&iacute;as &middot; 7 noches</div>
+      </div>
+      <div class="stat">
+        <div class="k">Bases principales</div>
+        <div class="v">Tirana &middot; Himar&euml; &middot; Gjirokast&euml;r</div>
+      </div>
+      <div class="stat">
+        <div class="k">Estilo del viaje</div>
+        <div class="v">Coche &middot; Costa &middot; Patrimonio &middot; Ritmo relajado</div>
+      </div>
+    </section>
+
+    <!-- ROUTE PROGRESS -->
+    <div class="route-progress anim-hidden">
+      <div class="route-dot" title="Tirana"><span class="route-dot-label">TIA</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="Paso de Llogara"><span class="route-dot-label">LLO</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="Himarë"><span class="route-dot-label">HIM</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="Ksamil y Butrinto"><span class="route-dot-label">KSA</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="Gjirokastër"><span class="route-dot-label">GJI</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="Berat"><span class="route-dot-label">BER</span></div>
+      <div class="route-line"></div>
+      <div class="route-dot" title="Tirana"><span class="route-dot-label">TIA</span></div>
+    </div>
+
+    <!-- MAPA -->
+    <section class="section anim-hidden">
+      <div class="section-header">
+        <h2>Mapa del itinerario</h2>
+        <p>Ruta principal completa.</p>
+      </div>
+      <div class="table-wrap">
+        <div class="map-shell"><div id="map"></div></div>
+        <script>
+          (function () {
+            var locations = [
+              { name: "Aeropuerto de Tirana", lat: 41.4147, lon: 19.7206 },
+              { name: "Tirana", lat: 41.3275, lon: 19.8187 },
+              { name: "Paso de Llogara", lat: 40.1944, lon: 19.5987 },
+              { name: "Himarë", lat: 40.1017, lon: 19.7440 },
+              { name: "Ksamil", lat: 39.7682, lon: 20.0009 },
+              { name: "Butrinto", lat: 39.7457, lon: 20.0209 },
+              { name: "Himarë", lat: 40.1017, lon: 19.7440 },
+              { name: "Gjirokastër", lat: 40.0758, lon: 20.1389 },
+              { name: "Berat", lat: 40.7058, lon: 19.9522 },
+              { name: "Tirana", lat: 41.3275, lon: 19.8187 },
+              { name: "Aeropuerto de Tirana", lat: 41.4147, lon: 19.7206 }
+            ];
+            // Evita volver a Himare tras Butrinto: la ruta sigue directamente a Gjirokaster.
+            locations.splice(6, 1);
+            var map = L.map('map', { scrollWheelZoom: false }).setView([40.55, 19.86], 7);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 18,
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+            var latlngs = locations.map(function (loc) { return [loc.lat, loc.lon]; });
+
+            // Solicita a OSRM la geometria real de conduccion sobre la red de OpenStreetMap.
+            var coordinates = locations.map(function (loc) {
+              return loc.lon + ',' + loc.lat;
+            }).join(';');
+            var routeUrl = 'https://router.project-osrm.org/route/v1/driving/' + coordinates +
+              '?overview=full&geometries=geojson&steps=false&continue_straight=false';
+
+            fetch(routeUrl)
+              .then(function (response) {
+                if (!response.ok) throw new Error('No se pudo calcular la ruta');
+                return response.json();
+              })
+              .then(function (data) {
+                if (data.code !== 'Ok' || !data.routes || !data.routes.length) {
+                  throw new Error('Ruta no disponible');
+                }
+                var roadRoute = L.geoJSON(data.routes[0].geometry, {
+                  style: {
+                    color: '#c62828', weight: 5, opacity: 0.9,
+                    lineCap: 'round', lineJoin: 'round'
+                  }
+                }).addTo(map);
+                map.fitBounds(roadRoute.getBounds(), { padding: [24, 24] });
+                var status = document.getElementById('route-status');
+                if (status) status.textContent = 'Ruta por carretera calculada con datos de OpenStreetMap.';
+              })
+              .catch(function () {
+                map.fitBounds(L.latLngBounds(latlngs).pad(0.08));
+                var status = document.getElementById('route-status');
+                if (status) status.textContent = 'No se ha podido cargar temporalmente la ruta por carretera. Recarga la pagina para intentarlo de nuevo.';
+              });
+
+            var uniqueStops = [
+              locations[0], locations[1], locations[2], locations[3],
+              locations[4], locations[5], locations[6], locations[7]
+            ];
+            uniqueStops.forEach(function (loc, i) {
+              L.circleMarker([loc.lat, loc.lon], {
+                radius: 9, fillColor: '#c62828', color: '#ffffff', weight: 3, fillOpacity: 1
+              }).addTo(map).bindTooltip((i + 1) + '. ' + loc.name, {
+                permanent: true, direction: 'top', offset: [0, -12], className: 'route-tooltip'
+              });
+            });
+            map.fitBounds(L.latLngBounds(latlngs).pad(0.08));
+          })();
+        </script>
+        <div class="place-links">
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=41.3275&mlon=19.8187#map=12/41.3275/19.8187" target="_blank" rel="noopener"><strong>Tirana</strong><span>Llegada, salida y visitas urbanas</span></a>
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=40.1944&mlon=19.5987#map=12/40.1944/19.5987" target="_blank" rel="noopener"><strong>Paso de Llogara</strong><span>Parada panor&aacute;mica hacia la Riviera</span></a>
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=40.1017&mlon=19.7440#map=12/40.1017/19.7440" target="_blank" rel="noopener"><strong>Himar&euml;</strong><span>Base principal de playa</span></a>
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=39.7682&mlon=20.0009#map=12/39.7682/20.0009" target="_blank" rel="noopener"><strong>Ksamil / Butrinto</strong><span>Playas y yacimiento arqueol&oacute;gico</span></a>
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=40.0758&mlon=20.1389#map=13/40.0758/20.1389" target="_blank" rel="noopener"><strong>Gjirokast&euml;r</strong><span>Castillo, bazar y casas otomanas</span></a>
+          <a class="place-link" href="https://www.openstreetmap.org/?mlat=40.7058&mlon=19.9522#map=13/40.7058/19.9522" target="_blank" rel="noopener"><strong>Berat</strong><span>Parada obligatoria en el regreso</span></a>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot main"></span>Ruta principal</span>
+        </div>
+        <div class="map-note" id="route-status">Calculando la ruta real por carretera entre destinos&hellip;</div>
+      </div>
+    </section>
+
+    <!-- PLAN DIA POR DIA -->
+    <section class="section anim-hidden">
+      <div class="section-header">
+        <h2>Plan d&iacute;a por d&iacute;a</h2>
+        <p>Itinerario ajustado a las fechas definitivas del 31 de agosto al 7 de septiembre.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>D&iacute;a</th><th>Lugar</th><th>Trayecto en coche</th><th>Plan principal</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="date">31 agosto</td><td class="day">D&iacute;a 1</td>
+              <td class="place">Barcelona &rarr; Tirana</td>
+              <td class="transport">Aeropuerto &rarr; centro de Tirana: <strong>18 km &middot; 25&ndash;35 min</strong>.</td>
+              <td class="plan"><strong>19:15&ndash;21:50:</strong> vuelo Barcelona&ndash;Tirana. <strong>22:00&ndash;23:00:</strong> recogida de equipaje y traslado. Llegada prevista al alojamiento sobre las 23:00; cena ligera solo si est&aacute; disponible y descanso.</td>
+            </tr>
+            <tr>
+              <td class="date">1 septiembre</td><td class="day">D&iacute;a 2</td>
+              <td class="place">Tirana</td>
+              <td class="transport">Sin trayecto interurbano. El centro se recorre a pie.</td>
+              <td class="plan"><strong>09:30&ndash;13:30:</strong> Plaza Skanderbeg, centro y Pazari i Ri. <strong>13:30&ndash;15:00:</strong> comida. <strong>15:00&ndash;18:30:</strong> Pir&aacute;mide y Gran Parque. <strong>19:00 en adelante:</strong> paseo y cena en Blloku. Segunda noche en Tirana.</td>
+            </tr>
+            <tr>
+              <td class="date">2 septiembre</td><td class="day">D&iacute;a 3</td>
+              <td class="place">Tirana &rarr; Himar&euml;</td>
+              <td class="transport">Tirana &rarr; Himar&euml; por Llogara: <strong>220 km &middot; unas 4 h</strong>, sin contar paradas.</td>
+              <td class="plan"><strong>08:30:</strong> recogida del coche. <strong>09:00&ndash;12:00:</strong> carretera hasta Llogara. <strong>12:00&ndash;12:30:</strong> miradores. <strong>13:00&ndash;14:30:</strong> comida en Sofia Bar, Dh&euml;rmi. <strong>14:30&ndash;15:30:</strong> llegada a Himar&euml;. Resto de la tarde para instalarse, descansar y pasear.</td>
+            </tr>
+            <tr>
+              <td class="date">3 septiembre</td><td class="day">D&iacute;a 4</td>
+              <td class="place">Riviera Albanesa</td>
+              <td class="transport">Himar&euml; &rarr; acceso a Gjipe: <strong>15 km &middot; unos 30 min</strong>. Gjipe &rarr; Livadhi: <strong>12 km &middot; 25 min</strong>. Livadhi &rarr; Himar&euml;: <strong>5 km &middot; 10 min</strong>.</td>
+              <td class="plan"><strong>09:00&ndash;14:30:</strong> ma&ntilde;ana completa de playa, priorizando Gjipe Beach y teniendo en cuenta el acceso a pie. <strong>14:30&ndash;16:00:</strong> comida. <strong>16:00&ndash;19:00:</strong> Livadhi Beach o descanso en Himar&euml;. Jale se deja fuera para no convertir el d&iacute;a en una sucesi&oacute;n de traslados.</td>
+            </tr>
+            <tr>
+              <td class="date">4 septiembre</td><td class="day">D&iacute;a 5</td>
+              <td class="place">Ksamil y Butrinto</td>
+              <td class="transport">Himar&euml; &rarr; Ksamil: <strong>70 km &middot; 1 h 40 min</strong>. Ksamil &rarr; Butrinto: <strong>5 km &middot; 10 min</strong>. Butrinto &rarr; Gjirokast&euml;r: <strong>70 km &middot; 1 h 30 min</strong>. Total: <strong>145 km &middot; 3 h 20 min</strong>.</td>
+              <td class="plan"><strong>08:30:</strong> salida con el equipaje. <strong>10:15&ndash;14:00:</strong> ma&ntilde;ana larga de ba&ntilde;o en Plazhi i Ksamilit. <strong>14:00&ndash;15:00:</strong> comida. <strong>15:15&ndash;17:15:</strong> Parque Nacional de Butrinto. <strong>17:15&ndash;18:45:</strong> carretera a Gjirokast&euml;r, llegada antes de la puesta de sol y alojamiento.</td>
+            </tr>
+            <tr>
+              <td class="date">5 septiembre</td><td class="day">D&iacute;a 6</td>
+              <td class="place">Gjirokast&euml;r</td>
+              <td class="transport">Sin trayecto interurbano.</td>
+              <td class="plan"><strong>09:30&ndash;12:30:</strong> castillo y miradores. <strong>12:30&ndash;14:30:</strong> bazar y comida. <strong>15:00&ndash;17:00:</strong> visita a una casa otomana. <strong>17:00 en adelante:</strong> paseo libre, descanso y cena. Segunda noche en Gjirokast&euml;r.</td>
+            </tr>
+            <tr>
+              <td class="date">6 septiembre</td><td class="day">D&iacute;a 7</td>
+              <td class="place">Gjirokast&euml;r &rarr; Berat &rarr; Tirana</td>
+              <td class="transport">Gjirokast&euml;r &rarr; Berat: <strong>180 km &middot; 2 h 45 min</strong>. Berat &rarr; Tirana: <strong>100 km &middot; 1 h 45 min</strong>. Total: <strong>280 km &middot; 4 h 30 min</strong>.</td>
+              <td class="plan"><strong>09:00:</strong> salida de Gjirokast&euml;r. <strong>11:45&ndash;13:30:</strong> castillo de Berat. <strong>13:30&ndash;15:00:</strong> comida. <strong>15:00&ndash;17:00:</strong> Mangalem, puente de Gorica y paseo junto al r&iacute;o. <strong>17:00&ndash;18:45:</strong> carretera a Tirana. Llegada prevista al alojamiento sobre las <strong>19:00</strong>.</td>
+            </tr>
+            <tr>
+              <td class="date">7 septiembre</td><td class="day">D&iacute;a 8</td>
+              <td class="place">Tirana &rarr; Barcelona</td>
+              <td class="transport">Centro &rarr; aeropuerto: <strong>18 km &middot; 25&ndash;35 min</strong>.</td>
+              <td class="plan"><strong>09:30&ndash;13:30:</strong> ma&ntilde;ana libre. <strong>13:30&ndash;15:00:</strong> comida y recogida del equipaje. <strong>15:30:</strong> salida hacia el aeropuerto, con margen para devolver el coche. <strong>18:55&ndash;21:35:</strong> vuelo a Barcelona.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- QUE VER O HACER -->
+    <section class="section anim-hidden">
+      <div class="section-header">
+        <h2>Qu&eacute; ver o hacer cada d&iacute;a</h2>
+        <p>Plan diario de visitas, playa, comidas y desplazamientos.</p>
+      </div>
+      <div class="table-wrap">
+        <div class="info-grid">
+          <div class="info-card">
+            <h4>D&iacute;a 1 &middot; 31 agosto &mdash; Llegada a Tirana</h4>
+            <ul>
+              <li>Llegada al aeropuerto a las 21:50.</li>
+              <li>Traslado al alojamiento en Tirana.</li>
+              <li>Cena ligera y descanso.</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h4>D&iacute;a 2 &middot; 1 septiembre &mdash; Tirana</h4>
+            <ul>
+              <li>Recorrer la Plaza Skanderbeg y el centro a pie.</li>
+              <li>Visitar la Pir&aacute;mide y subir a su mirador.</li>
+              <li>Pasear por Pazari i Ri, Blloku y el Gran Parque.</li>
+              <li>Cenar en Oda Garden, Mullixhiu o Era Blloku.</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h4>D&iacute;a 3 &middot; 2 septiembre &mdash; Tirana a Himar&euml;</h4>
+            <ul>
+              <li>Recoger el coche y salir hacia la Riviera.</li>
+              <li>Parar en los miradores del Paso de Llogara.</li>
+              <li>Comer en Sofia Bar, en Dh&euml;rmi.</li>
+              <li>Llegar a Himar&euml;, pasear junto al mar y descansar.</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h4>D&iacute;a 4 &middot; 3 septiembre &mdash; Riviera Albanesa</h4>
+            <ul>
+              <li><strong>D&iacute;a para disfrutar de la playa</strong> sin prisas.</li>
+              <li>Dedicar la ma&ntilde;ana completa a Gjipe Beach.</li>
+              <li>Pasar la tarde en Livadhi Beach o descansar en Himar&euml;.</li>
+              <li>Regresar a Himar&euml; para pasear y cenar.</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h4>D&iacute;a 5 &middot; 4 septiembre &mdash; Costa y Butrinto</h4>
+            <ul>
+              <li>Salir temprano de Himar&euml; hacia Ksamil.</li>
+              <li>Ba&ntilde;arse en Plazhi i Ksamilit.</li>
+              <li>Visitar el Parque Nacional de Butrinto.</li>
+              <li>Continuar hasta Gjirokast&euml;r y alojarse.</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h4>D&iacute;a 6 &middot; 5 septiembre &mdash; Gjirokast&euml;r</h4>
+            <ul>
+              <li>Visitar el castillo y sus miradores.</li>
+              <li>Recorrer el antiguo bazar y las calles empedradas.</li>
+              <li>Entrar en una casa otomana tradicional.</li>
+              <li>Probar tav&euml; kosi, qofte y byrek.</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h4>D&iacute;a 7 &middot; 6 septiembre &mdash; Berat y Tirana</h4>
+            <ul>
+              <li>Salir de Gjirokast&euml;r a las 09:00 hacia Berat.</li>
+              <li>Visitar el castillo y el barrio de Mangalem.</li>
+              <li>Comer, cruzar el puente de Gorica y disfrutar de Berat durante la tarde.</li>
+              <li>Salir hacia Tirana a las 17:00 y llegar alrededor de las 19:00.</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h4>D&iacute;a 8 &middot; 7 septiembre &mdash; Regreso</h4>
+            <ul>
+              <li>Ma&ntilde;ana libre en Tirana.</li>
+              <li>Comer con tiempo antes de salir.</li>
+              <li>Devolver el coche y trasladarse a la terminal.</li>
+              <li>Vuelo a Barcelona a las 18:55.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRANSPORTE Y ALOJAMIENTO -->
+    <section class="section anim-hidden">
+      <div class="section-header">
+        <h2>Vuelos, coche y alojamiento</h2>
+        <p>Reservas conocidas y distribuci&oacute;n de noches propuesta.</p>
+      </div>
+      <div class="table-wrap">
+        <h3>Vuelos</h3>
+        <table>
+          <thead><tr><th>Fecha</th><th>Trayecto</th><th>Vuelo</th><th>Horario local</th><th>Duraci&oacute;n programada</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td class="date">31 ago</td><td class="place">Barcelona (BCN) &rarr; Tirana (TIA)</td><td>Vueling VY8580</td><td class="transport">19:15&ndash;21:50</td><td>2 h 35 min</td><td><span class="pill pill-booked">Confirmado</span></td></tr>
+            <tr><td class="date">7 sep</td><td class="place">Tirana (TIA) &rarr; Barcelona (BCN-T2)</td><td>Wizz Air W4 5153</td><td class="transport">18:55&ndash;21:35</td><td>2 h 40 min</td><td><span class="pill pill-booked">Confirmado</span></td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:10px; font-size:12px; color:var(--muted);">Barcelona y Tirana comparten huso horario durante estas fechas, por lo que no hay cambio de hora en los vuelos.</p>
+
+        <h3>Coche de alquiler</h3>
+        <table>
+          <thead><tr><th>Recogida</th><th>Devoluci&oacute;n</th><th>Reserva</th><th>Documentaci&oacute;n</th><th>Estado / notas</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="date">2 sep, ma&ntilde;ana</td><td class="date">7 sep, antes del vuelo</td>
+              <td class="transport">Buscar por Booking y comparar proveedor, seguro, franquicia, dep&oacute;sito y pol&iacute;tica de combustible.</td>
+              <td class="transport">Carnet de conducir habitual. Llevar el permiso internacional como respaldo, aunque en la experiencia compartida no se lo solicitaron.</td>
+              <td><span class="pill pill-pending">Pendiente</span><br>Evitar conducir de noche.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Alojamiento</h3>
+        <table>
+          <thead><tr><th>Destino</th><th>Noches</th><th>Entrada</th><th>Salida</th><th>Hotel</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td class="place">Tirana</td><td>2 noches</td><td class="date">31 ago</td><td class="date">2 sep</td><td class="transport">Por decidir</td><td><span class="pill pill-pending">Pendiente</span></td></tr>
+            <tr><td class="place">Himar&euml;</td><td>2 noches</td><td class="date">2 sep</td><td class="date">4 sep</td><td class="transport">Por decidir</td><td><span class="pill pill-pending">Pendiente</span></td></tr>
+            <tr><td class="place">Gjirokast&euml;r</td><td>2 noches</td><td class="date">4 sep</td><td class="date">6 sep</td><td class="transport">Por decidir</td><td><span class="pill pill-pending">Pendiente</span></td></tr>
+            <tr><td class="place">Tirana</td><td>1 noche</td><td class="date">6 sep</td><td class="date">7 sep</td><td class="transport">Por decidir</td><td><span class="pill pill-pending">Pendiente</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ITINERARIO POR DESTINOS -->
+    <section class="section anim-hidden">
+      <div class="section-header">
+        <h2>Itinerario por destinos</h2>
+        <p>Mapas locales con los puntos principales y alternativas.</p>
+      </div>
+      <div class="table-wrap">
+
+        <details open>
+          <summary>1. Tirana</summary>
+          <div>
+            <div class="mini-map-wrap"><div class="mini-map" id="map-tirana"></div></div>
+            <p><strong>Estancias:</strong> noches del 31 de agosto y 1 de septiembre, y noche del 6 de septiembre.</p>
+            <p><strong>Planes y notas</strong></p>
+            <ul>
+              <li><strong>Centro:</strong> Plaza Skanderbeg y alrededores.</li>
+              <li><strong>Arquitectura contempor&aacute;nea:</strong> Pir&aacute;mide de Tirana.</li>
+              <li><strong>Ambiente:</strong> Blloku para pasear, cenar o tomar algo.</li>
+              <li><strong>Espacios abiertos:</strong> Gran Parque de Tirana.</li>
+              <li><strong>Mercado y comida:</strong> Pazari i Ri.</li>
+              <li>El 1 de septiembre se dedica por completo a Tirana; la tarde del 6 queda libre para descansar o completar alguna visita.</li>
+            </ul>
+            <p><strong>Restaurantes apuntados:</strong> Oda Garden, Mullixhiu y Era Blloku.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>2. Paso de Llogara y Himar&euml;</summary>
+          <div>
+            <div class="mini-map-wrap"><div class="mini-map" id="map-himare"></div></div>
+            <p><strong>Llegada:</strong> 2 sep &middot; <strong>Salida:</strong> 4 sep</p>
+            <p><strong>Alojamiento:</strong> 2 noches en Himar&euml;.</p>
+            <p><strong>Planes y notas</strong></p>
+            <ul>
+              <li><strong>Ruta de llegada:</strong> parada en el Paso de Llogara y comida en <strong>Sofia Bar, Dh&euml;rmi</strong>, antes de bajar hacia Himar&euml;.</li>
+              <li><strong>Livadhi Beach:</strong> playa principal propuesta para el 3 de septiembre.</li>
+              <li><strong>Gjipe Beach:</strong> visita prioritaria el 3 de septiembre, combinada con Livadhi y teniendo en cuenta el acceso a pie desde el aparcamiento.</li>
+              <li><strong>Jale Beach:</strong> alternativa opcional si el d&iacute;a no queda demasiado cargado.</li>
+              <li>Paseo por Himar&euml; al final de las jornadas y ritmo relajado de playa.</li>
+            </ul>
+            <p><strong>Restaurantes apuntados:</strong> Taverna Lefteri, To Steki y Esperia.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>3. Ksamil y Butrinto</summary>
+          <div>
+            <div class="mini-map-wrap"><div class="mini-map" id="map-ksamil"></div></div>
+            <p><strong>Visita:</strong> 4 de septiembre, excursi&oacute;n de d&iacute;a desde Himar&euml;.</p>
+            <p><strong>Plan</strong></p>
+            <ul>
+              <li><strong>Ma&ntilde;ana:</strong> ba&ntilde;o y paseo por <strong>Plazhi i Ksamilit</strong>.</li>
+              <li><strong>Tarde:</strong> visita al yacimiento y al entorno natural del <strong>Parque Nacional de Butrinto</strong>.</li>
+              <li><strong>Noche:</strong> continuar directamente a Gjirokast&euml;r para evitar regresar a Himar&euml; y ahorrar unos 135 km.</li>
+            </ul>
+            <p><strong>Restaurantes apuntados en Ksamil:</strong> Guvat y Korali.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>4. Gjirokast&euml;r</summary>
+          <div>
+            <div class="mini-map-wrap"><div class="mini-map" id="map-gjirokaster"></div></div>
+            <p><strong>Llegada:</strong> 4 sep &middot; <strong>Salida:</strong> 6 sep</p>
+            <p><strong>Alojamiento:</strong> 2 noches para evitar cambiar de hotel cada d&iacute;a.</p>
+            <p><strong>Planes y notas</strong></p>
+            <ul>
+              <li>Castillo de Gjirokast&euml;r.</li>
+              <li>Antiguo bazar y calles empedradas.</li>
+              <li>Casas otomanas y miradores de la ciudad.</li>
+              <li><strong>Gastronom&iacute;a:</strong> tav&euml; kosi, qofte y byrek.</li>
+            </ul>
+            <p><strong>Restaurantes apuntados:</strong> Kujtimi y Odaja.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>5. Berat</summary>
+          <div>
+            <div class="mini-map-wrap"><div class="mini-map" id="map-berat"></div></div>
+            <p><strong>Visita:</strong> 6 de septiembre, como parada en la ruta de Gjirokast&euml;r a Tirana. No se cambia de alojamiento en Berat.</p>
+            <p><strong>Trayecto</strong></p>
+            <ul>
+              <li><strong>Gjirokast&euml;r &rarr; Berat:</strong> 180 km &middot; unas 2 h 45 min.</li>
+              <li><strong>Berat &rarr; Tirana:</strong> 100 km &middot; unas 1 h 45 min.</li>
+              <li>Saliendo de Gjirokast&euml;r a las 09:00 se pueden dedicar unas 5 horas a Berat y llegar a Tirana alrededor de las 19:00.</li>
+            </ul>
+            <p><strong>Puntos sugeridos:</strong> castillo, barrio de Mangalem y puente de Gorica.</p>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- INFORMACION PRACTICA -->
+    <section class="section anim-hidden">
+      <div class="section-header">
+        <h2>Presupuesto e informaci&oacute;n pr&aacute;ctica</h2>
+        <p>Resumen de la gu&iacute;a inicial y de las recomendaciones recibidas.</p>
+      </div>
+      <div class="table-wrap">
+        <div class="info-grid">
+          <div class="info-card">
+            <h4>Presupuesto orientativo</h4>
+            <p><strong>1.100&ndash;1.700 &euro; por pareja</strong> para coche, gasolina, hoteles, comidas y entradas.</p>
+            <p>La experiencia compartida indica que es una estimaci&oacute;n razonable y que se puede quedar cerca de la parte baja sin restringirse demasiado.</p>
+          </div>
+          <div class="info-card">
+            <h4>Qu&eacute; llevar</h4>
+            <ul>
+              <li>Escarpines y gafas de snorkel.</li>
+              <li>Protector solar.</li>
+              <li>Carnet de conducir y permiso internacional como respaldo.</li>
+              <li>Tarjeta bancaria y algo de efectivo en lek.</li>
+              <li>Bater&iacute;a externa y mapas descargados sin conexi&oacute;n.</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h4>Conducci&oacute;n y alquiler</h4>
+            <ul>
+              <li>La reserva del coche por Booking result&oacute; sencilla en la experiencia recibida.</li>
+              <li>Comprobar con el proveedor los documentos, el dep&oacute;sito, el seguro y la franquicia.</li>
+              <li>Evitar conducir de noche.</li>
+              <li>A principios de septiembre hay luz aproximadamente de 06:10 a 19:05&ndash;19:10. Los trayectos largos terminan hacia las 18:45 para conservar margen antes del anochecer.</li>
+              <li>Recoger el coche el 2 de septiembre por la ma&ntilde;ana permite visitar Tirana a pie el d&iacute;a anterior y ahorrar un d&iacute;a de alquiler.</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h4>Norte de Albania</h4>
+            <p>Se recomienda dejarlo para otro viaje: es muy atractivo, pero est&aacute; m&aacute;s orientado a rutas de monta&ntilde;a y puede implicar una conducci&oacute;n m&aacute;s exigente y un itinerario m&aacute;s apretado.</p>
+          </div>
+        </div>
+        <div class="callout"><strong>Lectura general del itinerario:</strong> Tirana se visita el d&iacute;a siguiente a la llegada y Berat queda incluido obligatoriamente. Continuar de Butrinto a Gjirokast&euml;r evita regresar a Himar&euml;. Las noches se agrupan en Tirana, Himar&euml; y Gjirokast&euml;r para reducir cambios de alojamiento. Los tiempos son orientativos y no incluyen paradas, tr&aacute;fico ni b&uacute;squeda de aparcamiento.</div>
+      </div>
+    </section>
+
+    <section class="foot anim-hidden">
+      <h3>Notas antes de reservar</h3>
+      <ul>
+        <li>Confirmar horarios y condiciones de los vuelos directamente en las reservas.</li>
+        <li>Revisar los horarios de apertura y reservar restaurantes cuando se acerque el viaje.</li>
+        <li>Comprobar aparcamiento en los alojamientos de Himar&euml;, Gjirokast&euml;r y Tirana.</li>
+        <li>Guardar copias de reservas, seguro, documentaci&oacute;n y mapas para uso sin conexi&oacute;n.</li>
+      </ul>
+      <p class="muted">Documento de trabajo: hoteles, coche y actividades contin&uacute;an pendientes de confirmaci&oacute;n.</p>
+    </section>
+
+  </div>
+
+  <button class="scroll-top" id="scrollTop" aria-label="Volver arriba">&uarr;</button>
+
+  <script>
+    (function () {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('anim-visible');
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.anim-hidden').forEach(function (el) { observer.observe(el); });
+
+      var timeFmt = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+      var dateFmt = { weekday: 'short', day: 'numeric', month: 'short' };
+      function updateClocks() {
+        var now = new Date();
+        document.getElementById('clock-barcelona').textContent = new Intl.DateTimeFormat('es-ES', Object.assign({ timeZone: 'Europe/Madrid' }, timeFmt)).format(now);
+        document.getElementById('date-barcelona').textContent = new Intl.DateTimeFormat('es-ES', Object.assign({ timeZone: 'Europe/Madrid' }, dateFmt)).format(now);
+        document.getElementById('clock-tirana').textContent = new Intl.DateTimeFormat('es-ES', Object.assign({ timeZone: 'Europe/Tirane' }, timeFmt)).format(now);
+        document.getElementById('date-tirana').textContent = new Intl.DateTimeFormat('es-ES', Object.assign({ timeZone: 'Europe/Tirane' }, dateFmt)).format(now);
+      }
+      updateClocks();
+      setInterval(updateClocks, 1000);
+
+      var btn = document.getElementById('scrollTop');
+      window.addEventListener('scroll', function () { btn.classList.toggle('visible', window.scrollY > 400); });
+      btn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+      var miniMaps = [
+        {
+          id: 'map-tirana', lat: 41.3275, lon: 19.8187, zoom: 14, label: 'Tirana',
+          pois: [
+            { name: 'Plaza Skanderbeg', lat: 41.3289, lon: 19.8187 },
+            { name: 'Pirámide de Tirana', lat: 41.3233, lon: 19.8215 },
+            { name: 'Blloku', lat: 41.3192, lon: 19.8174 },
+            { name: 'Pazari i Ri', lat: 41.3312, lon: 19.8250 }
+          ],
+          extraPois: [
+            { name: 'Gran Parque de Tirana', lat: 41.3112, lon: 19.8217 },
+            { name: 'Aeropuerto de Tirana', lat: 41.4147, lon: 19.7206 }
+          ]
+        },
+        {
+          id: 'map-himare', lat: 40.1017, lon: 19.7440, zoom: 11, label: 'Himarë y Riviera',
+          pois: [
+            { name: 'Himarë', lat: 40.1017, lon: 19.7440 },
+            { name: 'Livadhi Beach', lat: 40.1207, lon: 19.7271 },
+            { name: 'Gjipe Beach', lat: 40.1263, lon: 19.6700 },
+            { name: 'Jale Beach', lat: 40.1117, lon: 19.7018 }
+          ],
+          extraPois: [
+            { name: 'Paso de Llogara', lat: 40.1944, lon: 19.5987 },
+            { name: 'Sofia Bar, Dhermi', lat: 40.1514, lon: 19.6389 }
+          ]
+        },
+        {
+          id: 'map-ksamil', lat: 39.7570, lon: 20.0110, zoom: 12, label: 'Ksamil y Butrinto',
+          pois: [
+            { name: 'Plazhi i Ksamilit', lat: 39.7682, lon: 20.0009 },
+            { name: 'Parque Nacional de Butrinto', lat: 39.7457, lon: 20.0209 }
+          ],
+          extraPois: [
+            { name: 'Mirador de Ksamil', lat: 39.7707, lon: 19.9990 }
+          ]
+        },
+        {
+          id: 'map-gjirokaster', lat: 40.0758, lon: 20.1389, zoom: 15, label: 'Gjirokastër',
+          pois: [
+            { name: 'Castillo de Gjirokastër', lat: 40.0732, lon: 20.1418 },
+            { name: 'Antiguo Bazar', lat: 40.0744, lon: 20.1395 },
+            { name: 'Casa Skenduli', lat: 40.0737, lon: 20.1370 }
+          ],
+          extraPois: [
+            { name: 'Centro de Gjirokastër', lat: 40.0758, lon: 20.1389 }
+          ]
+        },
+        {
+          id: 'map-berat', lat: 40.7058, lon: 19.9522, zoom: 14, label: 'Berat',
+          pois: [
+            { name: 'Castillo de Berat', lat: 40.7095, lon: 19.9440 },
+            { name: 'Mangalem', lat: 40.7052, lon: 19.9521 },
+            { name: 'Puente de Gorica', lat: 40.7011, lon: 19.9525 }
+          ],
+          extraPois: []
+        }
+      ];
+
+      var initialized = {};
+      function initMiniMap(cfg) {
+        if (initialized[cfg.id]) return;
+        var el = document.getElementById(cfg.id);
+        if (!el || el.offsetHeight === 0) return;
+        var m = L.map(cfg.id, { scrollWheelZoom: false, zoomControl: true, dragging: true, attributionControl: false });
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(m);
+        var bounds = [];
+        (cfg.pois || []).forEach(function (poi, idx) {
+          bounds.push([poi.lat, poi.lon]);
+          var isMain = idx === 0;
+          L.circleMarker([poi.lat, poi.lon], {
+            radius: isMain ? 8 : 6,
+            fillColor: isMain ? '#c62828' : '#172126',
+            color: '#ffffff', weight: 2, fillOpacity: 0.95
+          }).addTo(m).bindTooltip(poi.name, {
+            permanent: false, direction: 'top', offset: [0, -10], className: 'route-tooltip'
+          });
+        });
+        (cfg.extraPois || []).forEach(function (poi) {
+          bounds.push([poi.lat, poi.lon]);
+          L.circleMarker([poi.lat, poi.lon], {
+            radius: 6, fillColor: '#f59e0b', color: '#ffffff', weight: 2, fillOpacity: 0.95
+          }).addTo(m).bindTooltip(poi.name, {
+            permanent: false, direction: 'top', offset: [0, -10], className: 'route-tooltip-alt'
+          });
+        });
+        if (bounds.length) {
+          m.fitBounds(bounds, { padding: [24, 24] });
+          if (cfg.zoom) setTimeout(function () { if (m.getZoom() > cfg.zoom) m.setZoom(cfg.zoom); }, 0);
+        } else {
+          m.setView([cfg.lat, cfg.lon], cfg.zoom || 12);
+        }
+        initialized[cfg.id] = true;
+        setTimeout(function () { m.invalidateSize(); }, 200);
+      }
+
+      setTimeout(function () { miniMaps.forEach(function (cfg) { initMiniMap(cfg); }); }, 800);
+      document.querySelectorAll('details').forEach(function (d) {
+        d.addEventListener('toggle', function () {
+          if (d.open) setTimeout(function () { miniMaps.forEach(function (cfg) { initMiniMap(cfg); }); }, 150);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
